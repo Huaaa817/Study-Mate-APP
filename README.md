@@ -1,4 +1,4 @@
-# Lab 05 - Recipe app
+# Lab 04 - Recipe app
 
 In this lab, you will learn how to use genkit to build the agentic flows, deploy them onto the firebase function, and call them using flutter.
 
