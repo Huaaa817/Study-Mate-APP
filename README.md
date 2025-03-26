@@ -12,7 +12,7 @@ Before you start to do the lab, make sure you have completed the setting of fire
 ## Grading
 (30%) retrieveRecipeFlow 
 
-(1) (25%) Create a new flow called **retrieveRecipeFlow** in`/functions/src/flow/retrieveRecipe.ts`. This flow should take the user's ingredients as input, query the retriever, and return five relevant recipes. 
+(1) (25%) Create a new flow called **retrieveRecipeFlow** in`/functions/src/flow/retrieveRecipe.ts`. This flow should take the user's ingredients as input, query the retriever, and return **five** relevant recipes. 
 
 (2) (5%) Ensure the **input and output schemas** are well-defined.
 
@@ -24,14 +24,18 @@ Before you start to do the lab, make sure you have completed the setting of fire
 
 (10%) Deploy two flows onto firebase function.
 
-(15%) 
+(15%) Modify the function **retrieveRecipes** in **fetch_recipes** so that you can call **retrieveRecipeFlow**.
+- Make sure return value and type is correct. (any change is no need in UI since you return the right value).
+
+(15%) Modify the function **customRecipes** in **fetch__custom_recipe** so that you can call **customRecipeFlow**.
+- Make sure return value and type is correct. (any change is no need in UI since you return the right value).
 
 ## Deadline
-Submit your work before 2025/04/27 (Thur.) 17:20:00.
+Submit your work before 2025/03/27 (Thur.) 17:20:00.
 
 The score you have done will be 100%.
 
-Submit your work before 2025/04/27 (Thur.) 23:59:59.
+Submit your work before 2025/03/27 (Thur.) 23:59:59.
 
 The score of other part you have done after 17:20:00 will be 60%.
 

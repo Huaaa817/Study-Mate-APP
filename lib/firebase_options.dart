@@ -41,46 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDV6cThkSGlV-btuei-i3lf17lJeQDkkkc',
-    appId: '1:107524300965:web:274df78ffdd4e4cdd1ed4c',
-    messagingSenderId: '107524300965',
-    projectId: 'example-recipe-app-d72c1',
-    authDomain: 'example-recipe-app-d72c1.firebaseapp.com',
-    storageBucket: 'example-recipe-app-d72c1.firebasestorage.app',
+    apiKey: 'AIzaSyDLT5mDjSC5DKHBAXXOC7UfOHSlq__uZwk',
+    appId: '1:336003961732:web:aadd79b43a615ad20503d1',
+    messagingSenderId: '336003961732',
+    projectId: 'test-genkit-64288',
+    authDomain: 'test-genkit-64288.firebaseapp.com',
+    storageBucket: 'test-genkit-64288.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDioF5G6lwYnqqLQO9DAvBtrSnW1SV_9ok',
-    appId: '1:107524300965:android:1f6240f7c3ede2afd1ed4c',
-    messagingSenderId: '107524300965',
-    projectId: 'example-recipe-app-d72c1',
-    storageBucket: 'example-recipe-app-d72c1.firebasestorage.app',
+    apiKey: 'AIzaSyDk84-rE2iUEx3psDibsRWsISP03U8uun4',
+    appId: '1:336003961732:android:1163df3c5207c53e0503d1',
+    messagingSenderId: '336003961732',
+    projectId: 'test-genkit-64288',
+    storageBucket: 'test-genkit-64288.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDMHuk1X740IPan2VXAqO6m6kOiwBOvefM',
-    appId: '1:1023575489869:ios:8689d1fd917f7def97cb04',
-    messagingSenderId: '1023575489869',
-    projectId: 'recipe-app-16f8a',
-    storageBucket: 'recipe-app-16f8a.firebasestorage.app',
+    apiKey: 'AIzaSyB_m0Ohjb5Gjnb-13hw0JiDBpalbF_N8rI',
+    appId: '1:336003961732:ios:a9d1a65f8ee8016e0503d1',
+    messagingSenderId: '336003961732',
+    projectId: 'test-genkit-64288',
+    storageBucket: 'test-genkit-64288.firebasestorage.app',
     iosBundleId: 'com.example.recipeApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDMHuk1X740IPan2VXAqO6m6kOiwBOvefM',
-    appId: '1:1023575489869:ios:8689d1fd917f7def97cb04',
-    messagingSenderId: '1023575489869',
-    projectId: 'recipe-app-16f8a',
-    storageBucket: 'recipe-app-16f8a.firebasestorage.app',
+    apiKey: 'AIzaSyB_m0Ohjb5Gjnb-13hw0JiDBpalbF_N8rI',
+    appId: '1:336003961732:ios:a9d1a65f8ee8016e0503d1',
+    messagingSenderId: '336003961732',
+    projectId: 'test-genkit-64288',
+    storageBucket: 'test-genkit-64288.firebasestorage.app',
     iosBundleId: 'com.example.recipeApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyD2SrzbXdjYzCHmHoR2x2Do1JQnMN8IkN8',
-    appId: '1:1023575489869:web:b26e6375476e1d2697cb04',
-    messagingSenderId: '1023575489869',
-    projectId: 'recipe-app-16f8a',
-    authDomain: 'recipe-app-16f8a.firebaseapp.com',
-    storageBucket: 'recipe-app-16f8a.firebasestorage.app',
+    apiKey: 'AIzaSyDLT5mDjSC5DKHBAXXOC7UfOHSlq__uZwk',
+    appId: '1:336003961732:web:1f0183faccabcedc0503d1',
+    messagingSenderId: '336003961732',
+    projectId: 'test-genkit-64288',
+    authDomain: 'test-genkit-64288.firebaseapp.com',
+    storageBucket: 'test-genkit-64288.firebasestorage.app',
   );
+
 }
