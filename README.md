@@ -31,13 +31,11 @@ Before you start to do the lab, make sure you have completed the setting of fire
 - Make sure return value and type is correct. (any change is no need in UI since you return the right value).
 
 ## Deadline
-Submit your work before 2025/03/27 (Thur.) 17:20:00.
+Submit your work before 2025/04/03 (Thur.) 17:20:00.
 
 The score you have done will be 100%.
 
-Submit your work before 2025/03/27 (Thur.) 23:59:59.
-
-The score of other part you have done after 17:20:00 will be 60%.
+The score of other part you have done after 17:20:00 will be 0%.
 
 
 ## Resources
