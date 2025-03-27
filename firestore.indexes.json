@@ -1,0 +1,17 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "recipe_with_vector1",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "ingredients_embedding",
+          "vectorConfig": {
+            "dimension": 768,
+            "flat": {}
+          }
+        }
+      ]
+    }
+  ]
+}
