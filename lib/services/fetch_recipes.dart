@@ -8,15 +8,18 @@ import 'package:cloud_functions/cloud_functions.dart';
 Future<List<Map<String, dynamic>>> retrieveRecipes(String ingredients) async {
   try {
     final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
-      'customRecipeExample',
+      'retrieveRecipe',
     );
+    print("Hihi");
+    final response = await callable.call(ingredients); //check this argument
+    print("Hihi2");
+    //final data = Map<String, dynamic>.from(response.data as Map);
 
-    final response = await callable.call(ingredients);
+    //final originRecipe = Map<String, dynamic>.from(data["originRecipe"]);
+    //return [originRecipe];
+    final List<dynamic> data = response.data as List<dynamic>;
 
-    final data = Map<String, dynamic>.from(response.data as Map);
-
-    final originRecipe = Map<String, dynamic>.from(data["originRecipe"]);
-    return [originRecipe];
+    return data.map((recipe) => Map<String, dynamic>.from(recipe)).toList();
   } catch (e) {
     print("Error fetching retrieved recipes: $e");
     throw Exception("Failed to fetch recipes");

@@ -41,20 +41,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDLT5mDjSC5DKHBAXXOC7UfOHSlq__uZwk',
-    appId: '1:336003961732:web:aadd79b43a615ad20503d1',
-    messagingSenderId: '336003961732',
-    projectId: 'test-genkit-64288',
-    authDomain: 'test-genkit-64288.firebaseapp.com',
-    storageBucket: 'test-genkit-64288.firebasestorage.app',
+    apiKey: 'AIzaSyCoKWgPXpGKhFnbC0adNjrALVs2LtTif0U',
+    appId: '1:241594561616:web:065cf7cd4681b6a787cd55',
+    messagingSenderId: '241594561616',
+    projectId: 'example-recipe-app-5e590',
+    authDomain: 'example-recipe-app-5e590.firebaseapp.com',
+    storageBucket: 'example-recipe-app-5e590.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDk84-rE2iUEx3psDibsRWsISP03U8uun4',
-    appId: '1:336003961732:android:1163df3c5207c53e0503d1',
-    messagingSenderId: '336003961732',
-    projectId: 'test-genkit-64288',
-    storageBucket: 'test-genkit-64288.firebasestorage.app',
+    apiKey: 'AIzaSyBKeGi0jaB4TDraGoPbWqE_E3YtTLPDmoM',
+    appId: '1:241594561616:android:11a918b61679ccdd87cd55',
+    messagingSenderId: '241594561616',
+    projectId: 'example-recipe-app-5e590',
+    storageBucket: 'example-recipe-app-5e590.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -76,12 +76,12 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDLT5mDjSC5DKHBAXXOC7UfOHSlq__uZwk',
-    appId: '1:336003961732:web:1f0183faccabcedc0503d1',
-    messagingSenderId: '336003961732',
-    projectId: 'test-genkit-64288',
-    authDomain: 'test-genkit-64288.firebaseapp.com',
-    storageBucket: 'test-genkit-64288.firebasestorage.app',
+    apiKey: 'AIzaSyCoKWgPXpGKhFnbC0adNjrALVs2LtTif0U',
+    appId: '1:241594561616:web:c742952da9c9268b87cd55',
+    messagingSenderId: '241594561616',
+    projectId: 'example-recipe-app-5e590',
+    authDomain: 'example-recipe-app-5e590.firebaseapp.com',
+    storageBucket: 'example-recipe-app-5e590.firebasestorage.app',
   );
 
 }

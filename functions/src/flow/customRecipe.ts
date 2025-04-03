@@ -2,11 +2,11 @@ import { z } from "genkit";
 import { ai } from "../config";
 import { Recipe, RecipeSchema } from "../type";
 import { gemini15Flash, imagen3 } from "@genkit-ai/vertexai";
-import { recipieRetriever } from "../retriever";
+//import { recipieRetriever } from "../retriever";
 
 const recipeGenerator = ai.definePrompt({
     model: gemini15Flash,
-    name:'recipeGenerator',
+    name: 'recipeGenerator',
     messages: `You are given an original recipe with ingredients and directions. Your task is to modify the recipe to fit the user's available ingredients while keeping the dish as close to the original as possible.
 
                 Original Recipe:
@@ -37,7 +37,7 @@ const recipeGenerator = ai.definePrompt({
             ingredients: z.string()
         })
     }
-})         
+})
 
 const imageGenerator = ai.definePrompt({
     model: imagen3,
@@ -61,65 +61,81 @@ const imageGenerator = ai.definePrompt({
 
 export const customRecipeFlow = ai.defineFlow({
     name: 'customRecipeFlow',
-    inputSchema: z.string(),
+    //inputSchema: z.string(),
     /* hint: change to this inputSchema for lab */
-    // inputSchema: z.object({
-    //     suggestRecipe: RecipeSchema,
-    //     ingredients: z.string()
-    // }),
+    inputSchema: z.object({
+        suggestRecipe: RecipeSchema,
+        ingredients: z.string()
+    }),
 },
     async (input) => {
 
-        const recipes: Recipe[] = await ai.run(
-            'Retrieve matching ingredients',
-            async () => {
-                try{
-                    const docs = await ai.retrieve({
-                        retriever: recipieRetriever,
-                        query: input,
-                        options: {
-                            limit: 1,
-                        },
-                    });
-                    return docs.map((doc) => {
-                        const data = doc.toJSON();
-                        console.log(data);
-                        const recipe : Recipe = {
-                            title: '',
-                            directions: '',
-                            ingredients: '',
-                            ...data.metadata,
-                        };
-                        delete recipe.ingredient_embedding;
-                        recipe.ingredients = data.content[0].text!
-                        return recipe;
-                    });
-                }
-                catch(error) {
-                    console.log(error);
-                    return [];
-                }
-            },
-        );
+        // const recipes: Recipe[] = await ai.run(
+        //     'Retrieve matching ingredients',
+        //     async () => {
+        //         try {
+        //             const docs = await ai.retrieve({
+        //                 retriever: recipieRetriever,
+        //                 query: input,
+        //                 options: {
+        //                     limit: 1,
+        //                 },
+        //             });
+        //             return docs.map((doc) => {
+        //                 const data = doc.toJSON();
+        //                 console.log(data);
+        //                 const recipe: Recipe = {
+        //                     title: '',
+        //                     directions: '',
+        //                     ingredients: '',
+        //                     ...data.metadata,
+        //                 };
+        //                 delete recipe.ingredient_embedding;
+        //                 recipe.ingredients = data.content[0].text!
+        //                 return recipe;
+        //             });
+        //         }
+        //         catch (error) {
+        //             console.log(error);
+        //             return [];
+        //         }
+        //     },
+        // );
 
- 
         const response = await recipeGenerator(
-            
+
             {
-            suggestRecipe: recipes[0],
-            ingredients: input
-         });
+                suggestRecipe: input.suggestRecipe,
+                ingredients: input.ingredients//
+            });
 
         const customRecipe: Recipe | null = response?.output;
 
-        return customRecipe;
-        
+        if (!customRecipe) {
+            throw new Error("Failed to generate a custom recipe.");
+        }
+
+        const customRecipeImageResponse = await imageGenerator({
+            title: customRecipe.title,
+            ingredients: customRecipe.ingredients,
+            directions: customRecipe.directions
+        });
+        const customRecipeImage = { url: customRecipeImageResponse.message?.content?.[0]?.media?.url || "" };
+
+        const originRecipeImageResponse = await imageGenerator({
+            title: input.suggestRecipe.title,
+            ingredients: input.suggestRecipe.ingredients,
+            directions: input.suggestRecipe.directions
+        });
+        const originRecipeImage = { url: originRecipeImageResponse.message?.content?.[0]?.media?.url || "" };
+        //return customRecipe;
+
         /* hint: change to this return format for lab */
-        // return { 
-        //     recipe:  ...
-        //     customRecipeImage: ...
-        //     originRecipeImage: ...
-        // };
+        return {
+            recipe: customRecipe,
+            customRecipeImage: customRecipeImage,
+            originRecipeImage: originRecipeImage
+        };
 
     }
 )
