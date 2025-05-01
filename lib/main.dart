@@ -3,6 +3,10 @@ import 'package:flutter_app/services/navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+// ✅ 新增 Firebase 套件
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // flutterfire configure 產生的檔案
+
 final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
@@ -12,11 +16,15 @@ final theme = ThemeData(
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ 初始化 Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(
     MultiProvider(
       providers: [
-        // Provide NavigationService
         Provider<NavigationService>(create: (_) => NavigationService()),
       ],
       child: const App(),
@@ -32,7 +40,6 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: theme,
       routerConfig: routerConfig,
-      // Allow the Navigator built by the MaterialApp to restore the navigation stack when app restarts
       restorationScopeId: 'app',
     );
   }

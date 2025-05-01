@@ -1,10 +1,7 @@
 import { z } from "zod";
 
-export const RecipeSchema = z.object({
-  title: z.string(),
-  ingredients: z.string(),
-  directions: z.string(),
-  ingredient_embedding: z.unknown().optional(),
+export const ChatSchema = z.object({
+  chat: z.string(),
 });
 
-export type Recipe = z.infer<typeof RecipeSchema>;
+export type Chat = z.infer<typeof ChatSchema>;

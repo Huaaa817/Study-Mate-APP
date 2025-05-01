@@ -1,9 +1,5 @@
 import { onCallGenkit } from 'firebase-functions/https';
+import { greetingFlow } from './flow/chat';  // 引入生成打招呼語的Flow
 
-// TODO: export your functions
-import './flow/customRecipe';
-import './flow/retrieveRecipe';
-import { customRecipeFlow } from './flow/customRecipe';
-export const customRecipe = onCallGenkit(customRecipeFlow);
-import { retrieveRecipeFlow } from "./flow/retrieveRecipe";
-export const retrieveRecipe = onCallGenkit(retrieveRecipeFlow);
+// 註冊新的Function
+export const generateGreeting = onCallGenkit(greetingFlow);
