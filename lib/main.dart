@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/services/navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart'; // ⬅️ 加入這行
+import 'firebase_options.dart'; // ⬅️ 加入這行
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -12,7 +14,13 @@ final theme = ThemeData(
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // ✅ 初始化綁定
+  await Firebase.initializeApp(
+    // ✅ 正確使用 await
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(
     MultiProvider(
       providers: [
