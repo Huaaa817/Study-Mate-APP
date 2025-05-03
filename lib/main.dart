@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart'; // ⬅️ 加入這行
 import 'firebase_options.dart'; // ⬅️ 加入這行
 
+// ✅ 新增 Firebase 套件
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // flutterfire configure 產生的檔案
+
 final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
@@ -24,7 +28,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // Provide NavigationService
         Provider<NavigationService>(create: (_) => NavigationService()),
       ],
       child: const App(),
@@ -40,7 +43,6 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: theme,
       routerConfig: routerConfig,
-      // Allow the Navigator built by the MaterialApp to restore the navigation stack when app restarts
       restorationScopeId: 'app',
     );
   }
