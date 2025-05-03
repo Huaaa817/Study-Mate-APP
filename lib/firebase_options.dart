@@ -77,7 +77,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyCoKWgPXpGKhFnbC0adNjrALVs2LtTif0U',
-    appId: '1:241594561616:web:c742952da9c9268b87cd55',
+    appId: '1:241594561616:web:ee00c3a44360da4e87cd55',
     messagingSenderId: '241594561616',
     projectId: 'example-recipe-app-5e590',
     authDomain: 'example-recipe-app-5e590.firebaseapp.com',
