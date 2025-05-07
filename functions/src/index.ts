@@ -12,4 +12,12 @@ export const studyMateImage = onCallGenkit(studyMateImageFlow);
 // 註冊新的Function
 export const generateGreeting = onCallGenkit(greetingFlow);
 
+<<<<<<< Updated upstream
 export const generateBackground = onCallGenkit(backgroundFlow);  // 註冊背景生成的Flow
+=======
+
+import './flow/chatting';
+import { chattingFlow } from './flow/chatting';
+export const generateChatting = onCallGenkit(chattingFlow);
+
+>>>>>>> Stashed changes
