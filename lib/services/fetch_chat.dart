@@ -6,7 +6,6 @@ Future<String> fetchGreeting(String personality) async {
     final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
       'generateGreeting',
     );
-
     final response = await callable.call({'personality': personality});
 
     final data = Map<String, dynamic>.from(response.data as Map);

@@ -5,9 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart'; // ⬅️ 加入這行
 import 'firebase_options.dart'; // ⬅️ 加入這行
 
-// ✅ 新增 Firebase 套件
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // flutterfire configure 產生的檔案
 
 final theme = ThemeData(
   useMaterial3: true,

@@ -30,8 +30,8 @@ final routerConfig = GoRouter(
     ),
     GoRoute(
       path: '/chat',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: ChatPage(),
+      pageBuilder: (context, state) => NoTransitionPage<void>(
+        child: ChatPage(userPersonality: '可愛'),
       ),
     ),
     GoRoute(
