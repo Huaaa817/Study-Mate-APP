@@ -5,7 +5,7 @@ import { backgroundFlow } from './flow/background';  // 引入生成背景圖片
 
 // TODO: export your functions
 import './flow/image_study_mate';
-import './flow/chatting';
+// import './flow/chatting';
 import { studyMateImageFlow } from "./flow/image_study_mate";
 export const studyMateImage = onCallGenkit(studyMateImageFlow);
 
