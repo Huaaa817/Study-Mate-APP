@@ -15,7 +15,7 @@ Future<String> fetchChattingResponse(String userPersonality, String userMessage,
 
     // 確保回應有資料並返回 AI 回應
     final data = Map<String, dynamic>.from(response.data);
-    return data['response'] ?? 'Error: No response from AI';
+    return data['chatting'] ?? 'Error: No response from AI';
   } catch (e) {
     print('Error calling chat function: $e');
     return 'Error: Something went wrong with the chat.';
