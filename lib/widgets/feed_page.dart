@@ -1,29 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '/providers/study_duration_provider.dart';
 
-class FeedPage extends StatelessWidget {
+class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
 
   @override
+  State<FeedPage> createState() => _FeedPageState();
+}
+
+class _FeedPageState extends State<FeedPage> {
+  int _imageIndex = 0;
+
+  final List<String> _imagePaths = [
+    'assets/img/momo1.jpg',
+    'assets/img/momo2.jpg',
+    'assets/img/momo3.jpg',
+    'assets/img/momo4.jpg',
+  ];
+
+  void _handleButtonPress() {
+    if (_imageIndex < _imagePaths.length - 1) {
+      setState(() {
+        _imageIndex++;
+      });
+    } else {
+      final duration = context.read<StudyDurationProvider>().duration;
+      GoRouter.of(context).go('/study?duration=$duration');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isLast = _imageIndex == _imagePaths.length - 1;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('回饋')),
+      appBar: AppBar(title: const Text('Feed')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('學習完成！', style: TextStyle(fontSize: 24)),
+            Text(
+              '來餵食study mate吧！',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontSize: 24),
+            ),
+            const SizedBox(height: 20),
+            Image.asset(
+              _imagePaths[_imageIndex],
+              width: 200,
+              height: 200,
+              fit: BoxFit.contain,
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                GoRouter.of(context).go('/study?duration=10'); // 預設 10 秒
-              },
-              child: const Text('確認，返回學習'),
+              onPressed: _handleButtonPress,
+              child: Text(isLast ? '返回學習' : 'feed'),
             ),
           ],
         ),
       ),
-      // 無底部導航欄
     );
   }
 }

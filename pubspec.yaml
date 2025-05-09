@@ -46,6 +46,7 @@ dependencies:
   provider: ^6.1.2
   transparent_image: ^2.0.1
   go_router: ^15.0.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
@@ -70,5 +71,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - assets/studyMate.jpg
+  assets:
+     - assets/img/momo1.jpg
+     - assets/img/momo2.jpg
+     - assets/img/momo3.jpg
+     - assets/img/momo4.jpg

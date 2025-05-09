@@ -6,28 +6,31 @@ import { imagen3 } from "@genkit-ai/vertexai";
 const backgroundGenerator = ai.definePrompt({
     model: imagen3,  // 使用適合生成動漫圖像的模型
     name: 'backgroundGenerator',
-    messages: `Generate a lively and vibrant anime-style study environment with a cheerful and energetic atmosphere. The scene should include a variety of colorful and dynamic elements such as:
-- Bookshelves with books, potted plants with vibrant flowers, and quirky decorations like small figurines or a cute clock.
-- A patterned throw blanket or pillow in bright shades like yellow, orange, teal, blue, or green.
-- Soft, warm lighting such as a cute desk lamp or fairy lights, creating a cozy and inviting atmosphere.
-- A window with a view of a with some greenery or flowers visible outside.
-- A rug or carpet with bright, playful patterns like stripes, polka dots, or geometric shapes.
-- Walls decorated with colorful artwork, inspirational quotes, or fun posters, adding energy to the space.
+    messages: `You are generating a high-resolution, anime-style background image for a mobile study app.
 
-Please generate the image with a **random color palette** that includes both **cool tones** (like blue, green, purple) ** and warm tones** (like orange, yellow, red). The color distribution should be varied, ensuring a lively and dynamic feel, with no single color dominating the scene. The overall vibe should feel fresh, youthful, and perfect for an inspiring study app background. The background should be suitable for a mobile screen with a 9:16 aspect ratio and a resolution of 768x1408 pixels.`,
+🎯 Please generate a background scene based exactly on the following description:
+
+"{{description}}"
+
+Do not add characters, close-up objects, or details that are not mentioned above.
+
+The image should be a full, immersive environment with no people.  
+Resolution must be 768x1408 pixels (9:16).  
+Style: refined, calming, creatively inspiring, suitable as a mobile background.
+`,
     input: {
-        schema: z.object({}),
+        schema: z.object({ description: z.string() }),
     },
 });
 
 // 定義背景生成的 Flow
 export const backgroundFlow = ai.defineFlow({
     name: 'backgroundFlow',
-    inputSchema: z.object({}),
-}, async () => {
+    inputSchema: z.object({ description: z.string() }),
+}, async (input) => {
     try {
         // 生成背景圖片
-        const response = await backgroundGenerator({});
+        const response = await backgroundGenerator({ description: input.description });
 
         console.log("Response from background generator:", response);
 

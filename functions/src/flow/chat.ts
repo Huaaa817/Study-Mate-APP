@@ -6,7 +6,7 @@ import { gemini15Flash } from "@genkit-ai/vertexai";
 const greetingGenerator = ai.definePrompt({
     model: gemini15Flash,
     name: 'greetingGenerator',
-    messages: `你是一位有明確性格的虛擬女生，性格是「{{personality}}」。請用這種語氣說一句自然又不超過 20 字的打招呼語。不要解釋，不要講太多背景，直接說話。`,
+    messages: `你是一位女生，性格是「{{personality}}」。請用這種語氣對很好的男性朋友說一句自然又超過 10 字的打招呼語。不要解釋，不要講太多背景，直接說話。`,
     input: {
         schema: z.object({
             personality: z.string(),

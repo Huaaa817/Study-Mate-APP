@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/services/navigation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart'; // ⬅️ 加入這行
-import 'firebase_options.dart'; // ⬅️ 加入這行
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import '/providers/study_duration_provider.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -16,9 +16,9 @@ final theme = ThemeData(
 );
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // ✅ 初始化綁定
+  WidgetsFlutterBinding.ensureInitialized(); //初始化綁定
   await Firebase.initializeApp(
-    // ✅ 正確使用 await
+    // 正確使用 await
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -26,6 +26,9 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<NavigationService>(create: (_) => NavigationService()),
+        ChangeNotifierProvider<StudyDurationProvider>(
+          create: (_) => StudyDurationProvider(),
+        ),
       ],
       child: const App(),
     ),

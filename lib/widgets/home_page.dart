@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import '/services/fetch_chat.dart'; // 引入fetch_chat.dart
+import '/services/fetch_chat.dart';
 import 'package:flutter_app/services/fetch_study_mate.dart';
 import 'package:flutter_app/widgets/navigation_bar.dart';
 
@@ -29,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<String> getGreeting() async {
-    // 這裡的性格可以根據需要動態傳入
-    return await fetchGreeting("高冷");
+    // 性格可以根據需要動態傳入
+    return await fetchGreeting("可愛");
   }
 
   Future<void> _processImageFromFlow() async {
@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         'POST',
         Uri.parse('https://api.remove.bg/v1.0/removebg'),
       );
-      request.headers['X-Api-Key'] = 'Q8a1jbLGaGvaf77ZKq89PgUm'; // 換成你自己的 Key
+      request.headers['X-Api-Key'] = 'Q8a1jbLGaGvaf77ZKq89PgUm'; // 自己的 Key
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',
@@ -96,7 +96,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      //appBar: AppBar(title: const Text('Home')),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -104,20 +104,25 @@ class _HomePageState extends State<HomePage> {
             future: _greetingFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
+                return const Center(child: CircularProgressIndicator()); // ✅
               } else if (snapshot.hasError) {
-                return Text(
-                  'Error: ${snapshot.error}',
-                  style: TextStyle(color: Colors.white),
+                return Center(
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 );
               } else {
-                return Text(
-                  snapshot.data ?? 'No greeting found',
-                  style: TextStyle(color: Colors.white),
+                return Center(
+                  child: Text(
+                    snapshot.data ?? 'No greeting found',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 );
               }
             },
           ),
+
           const SizedBox(height: 20),
           _processedImage == null
               ? const CircularProgressIndicator()
