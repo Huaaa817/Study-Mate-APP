@@ -12,16 +12,49 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   int _imageIndex = 0;
+  List<String>? _imagePaths;
+  bool _initialized = false;
 
-  final List<String> _imagePaths = [
-    'assets/img/momo1.jpg',
-    'assets/img/momo2.jpg',
-    'assets/img/momo3.jpg',
-    'assets/img/momo4.jpg',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // 確保 context 可用後再初始化圖片列表
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final duration = context.read<StudyDurationProvider>().duration;
+
+      if (duration >= 35) {
+        _imagePaths = [
+          'assets/img/meat1.jpg',
+          'assets/img/meat2.jpg',
+          'assets/img/meat3.jpg',
+          'assets/img/meat4.jpg',
+        ];
+      } else if (duration >= 25) {
+        _imagePaths = [
+          'assets/img/ice_cream1.jpg',
+          'assets/img/ice_cream2.jpg',
+          'assets/img/ice_cream3.jpg',
+          'assets/img/ice_cream4.jpg',
+        ];
+      } else {
+        _imagePaths = [
+          'assets/img/momo1.jpg',
+          'assets/img/momo2.jpg',
+          'assets/img/momo3.jpg',
+          'assets/img/momo4.jpg',
+        ];
+      }
+
+      setState(() {
+        _initialized = true;
+      });
+    });
+  }
 
   void _handleButtonPress() {
-    if (_imageIndex < _imagePaths.length - 1) {
+    if (_imagePaths == null) return;
+
+    if (_imageIndex < _imagePaths!.length - 1) {
       setState(() {
         _imageIndex++;
       });
@@ -33,34 +66,38 @@ class _FeedPageState extends State<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLast = _imageIndex == _imagePaths.length - 1;
+    final isLast =
+        _imagePaths != null && _imageIndex == (_imagePaths!.length - 1);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Feed')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '來餵食study mate吧！',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            Image.asset(
-              _imagePaths[_imageIndex],
-              width: 200,
-              height: 200,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _handleButtonPress,
-              child: Text(isLast ? '返回學習' : 'feed'),
-            ),
-          ],
-        ),
+        child:
+            !_initialized || _imagePaths == null
+                ? const CircularProgressIndicator()
+                : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '來餵食study mate吧！',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(fontSize: 24),
+                    ),
+                    const SizedBox(height: 20),
+                    Image.asset(
+                      _imagePaths![_imageIndex],
+                      width: 200,
+                      height: 200,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _handleButtonPress,
+                      child: Text(isLast ? '返回學習' : 'feed'),
+                    ),
+                  ],
+                ),
       ),
     );
   }
