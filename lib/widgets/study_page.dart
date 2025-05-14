@@ -12,16 +12,27 @@ class StudyPage extends StatefulWidget {
   State<StudyPage> createState() => _StudyPageState();
 }
 
-class _StudyPageState extends State<StudyPage> {
-  late int _remainingSeconds;
+class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
+  late int _durationInterval; // 每次跳轉 feed 的時間間隔
+  int _elapsedSeconds = 0; // 累積時間
   Timer? _timer;
   bool _initialized = false;
   String? backgroundImageUrl;
-  Widget? _backgroundWidget; //緩存背景 widget
+  Widget? _backgroundWidget;
+
+  static int _sceneIndex = 0;
+  final List<String> _sceneDescriptions = [
+    "A quiet university courtyard in the early morning...",
+    "A cozy rooftop under a starry night sky...",
+    "A riverside path beneath blooming cherry blossom trees...",
+    "An indoor Japanese-style study room with tatami flooring...",
+    "A peaceful grassy field under soft golden sunlight...",
+  ];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // 加入 observer
   }
 
   @override
@@ -29,12 +40,12 @@ class _StudyPageState extends State<StudyPage> {
     super.didChangeDependencies();
 
     if (!_initialized) {
-      final duration =
+      _durationInterval =
           int.tryParse(
             GoRouterState.of(context).uri.queryParameters['duration'] ?? '60',
           ) ??
           60;
-      _remainingSeconds = duration;
+
       _startTimer();
       _fetchBackgroundImage();
       _initialized = true;
@@ -43,28 +54,43 @@ class _StudyPageState extends State<StudyPage> {
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds <= 0) {
-        timer.cancel();
-        GoRouter.of(context).go('/feed');
-      } else {
-        // 只更新倒數數字，不動背景
-        if (mounted) {
-          setState(() {
-            _remainingSeconds--;
-          });
-        }
+      if (!mounted) return;
+
+      setState(() {
+        _elapsedSeconds++;
+      });
+
+      if (_elapsedSeconds % _durationInterval == 0 && _elapsedSeconds != 0) {
+        _timer?.cancel(); // 停止計時器，避免回來後重啟兩個
+        _timer = null;
+
+        // 用 push 疊頁，feed 回來後不會重建
+        // GoRouter.of(context).push('/feed?duration=$_durationInterval');
+        GoRouter.of(context).push('/feed?duration=$_durationInterval').then((
+          _,
+        ) {
+          // 當從 feed page 返回時
+          if (mounted) _startTimer();
+        });
       }
     });
   }
 
-  static int _sceneIndex = 0; // 從 0 開始
-  final List<String> _sceneDescriptions = [
-    "A quiet university courtyard in the early morning. The sun casts soft golden light through the trees, and gentle shadows stretch across stone paths and study benches. Ivy climbs the walls of surrounding buildings, and a fountain quietly bubbles in the background.",
-    "A cozy rooftop under a starry night sky, decorated with string lights and a distant view of school buildings. The mood is serene and introspective, with gentle night tones.",
-    "A riverside path beneath blooming cherry blossom trees. Petals fall softly onto a clean walkway, with a study bench nearby and calm water reflecting the pink sky.",
-    "An indoor Japanese-style study room with tatami flooring, shoji sliding doors, and warm ambient lighting. Outside the window is a small zen garden with raked gravel and bonsai trees.",
-    "A peaceful grassy field under soft golden sunlight. The space feels wide, bright, and grounded in nature. There is a gentle breeze and a feeling of quiet clarity, suitable for peaceful focus.",
-  ];
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // 移除 observer
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    final mm = minutes.toString().padLeft(2, '0');
+    final ss = remainingSeconds.toString().padLeft(2, '0');
+    return '$mm:$ss';
+  }
+
   void _fetchBackgroundImage() async {
     try {
       final String description = _sceneDescriptions[_sceneIndex];
@@ -110,27 +136,31 @@ class _StudyPageState extends State<StudyPage> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      //appBar: AppBar(title: const Text('學習')),
       body: Stack(
         children: [
           if (_backgroundWidget != null) _backgroundWidget!,
-          Container(
-            color: Colors.black.withOpacity(0.4), // 讓文字清楚
-            alignment: Alignment.center,
-            child: Text(
-              '剩餘時間：$_remainingSeconds 秒',
-              style: const TextStyle(
-                fontSize: 28,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            left: 16,
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '累積專注時間：${_formatTime(_elapsedSeconds)}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: scheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

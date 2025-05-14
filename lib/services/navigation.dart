@@ -12,45 +12,41 @@ final routerConfig = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/todo',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: TodoPage(),
-      ),
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: TodoPage()),
     ),
     GoRoute(
       path: '/studyset',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: StudySetPage(),
-      ),
+      pageBuilder:
+          (context, state) =>
+              const NoTransitionPage<void>(child: StudySetPage()),
     ),
     GoRoute(
       path: '/home',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: HomePage(),
-      ),
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: HomePage()),
     ),
     GoRoute(
       path: '/chat',
-      pageBuilder: (context, state) => NoTransitionPage<void>(
-        child: ChatPage(userPersonality: '可愛'),
-      ),
+      pageBuilder:
+          (context, state) =>
+              NoTransitionPage<void>(child: ChatPage(userPersonality: '可愛')),
     ),
     GoRoute(
       path: '/achievement',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: AchievementPage(),
-      ),
+      pageBuilder:
+          (context, state) =>
+              const NoTransitionPage<void>(child: AchievementPage()),
     ),
     GoRoute(
       path: '/study',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: StudyPage(),
-      ),
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: StudyPage()),
     ),
     GoRoute(
       path: '/feed',
-      pageBuilder: (context, state) => const NoTransitionPage<void>(
-        child: FeedPage(),
-      ),
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: FeedPage()),
     ),
   ],
   initialLocation: '/home', // 預設顯示 HomePage
@@ -61,11 +57,10 @@ final routerConfig = GoRouter(
     }
     return null;
   },
-  errorBuilder: (context, state) => Scaffold(
-    body: Center(
-      child: Text('Page not found: ${state.uri.path}'),
-    ),
-  ),
+  errorBuilder:
+      (context, state) => Scaffold(
+        body: Center(child: Text('Page not found: ${state.uri.path}')),
+      ),
 );
 
 enum AppTab { todo, studyset, home, chat, achievement }

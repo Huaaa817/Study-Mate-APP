@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       //appBar: AppBar(title: const Text('Home')),
       body: Column(
@@ -104,19 +105,19 @@ class _HomePageState extends State<HomePage> {
             future: _greetingFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator()); // ✅
+                return const Center(child: CircularProgressIndicator()); //
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(
                     'Error: ${snapshot.error}',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: scheme.error),
                   ),
                 );
               } else {
                 return Center(
                   child: Text(
                     snapshot.data ?? 'No greeting found',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: scheme.onBackground), // 使用主內容字色
                   ),
                 );
               }

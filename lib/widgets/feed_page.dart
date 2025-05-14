@@ -59,8 +59,9 @@ class _FeedPageState extends State<FeedPage> {
         _imageIndex++;
       });
     } else {
-      final duration = context.read<StudyDurationProvider>().duration;
-      GoRouter.of(context).go('/study?duration=$duration');
+      // final duration = context.read<StudyDurationProvider>().duration;
+      // GoRouter.of(context).go('/study?duration=$duration');
+      context.pop();
     }
   }
 
@@ -68,9 +69,14 @@ class _FeedPageState extends State<FeedPage> {
   Widget build(BuildContext context) {
     final isLast =
         _imagePaths != null && _imageIndex == (_imagePaths!.length - 1);
-
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Feed')),
+      //   appBar: AppBar(
+      //   title: const Text('Feed'),
+      //   backgroundColor: scheme.primary, // buildColorTile('primary')
+      //   foregroundColor: scheme.onPrimary, // buildColorTile('onPrimary')
+      // ),
       body: Center(
         child:
             !_initialized || _imagePaths == null
@@ -80,9 +86,12 @@ class _FeedPageState extends State<FeedPage> {
                   children: [
                     Text(
                       '來餵食study mate吧！',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineSmall?.copyWith(fontSize: 24),
+                      style: TextStyle(
+                        fontSize: 24,
+                        color:
+                            scheme
+                                .onBackground, // buildColorTile('onBackground')
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Image.asset(
@@ -93,6 +102,20 @@ class _FeedPageState extends State<FeedPage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            scheme.secondaryContainer, // 'secondaryContainer'
+                        foregroundColor:
+                            scheme
+                                .onSecondaryContainer, // 'onSecondaryContainer'
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
                       onPressed: _handleButtonPress,
                       child: Text(isLast ? '返回學習' : 'feed'),
                     ),
