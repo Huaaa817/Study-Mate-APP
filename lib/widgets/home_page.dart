@@ -97,37 +97,54 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      //appBar: AppBar(title: const Text('Home')),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
         children: [
-          FutureBuilder<String>(
-            future: _greetingFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator()); //
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: TextStyle(color: scheme.error),
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Text(
-                    snapshot.data ?? 'No greeting found',
-                    style: TextStyle(color: scheme.onBackground), // 使用主內容字色
-                  ),
-                );
-              }
-            },
+          // 🔹 背景圖層
+          Positioned.fill(
+            child: Image.asset('assets/img/home_bg.jpg', fit: BoxFit.cover),
           ),
 
-          const SizedBox(height: 20),
-          _processedImage == null
-              ? const CircularProgressIndicator()
-              : Image.memory(_processedImage!),
+          // 🔹 主內容層
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FutureBuilder<String>(
+                future: _greetingFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: TextStyle(color: scheme.error),
+                      ),
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          snapshot.data ?? 'No greeting found',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: scheme.onBackground,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 20),
+              _processedImage == null
+                  ? const CircularProgressIndicator()
+                  : Image.memory(_processedImage!),
+            ],
+          ),
         ],
       ),
       bottomNavigationBar: const AppBottomNavigationBar(),

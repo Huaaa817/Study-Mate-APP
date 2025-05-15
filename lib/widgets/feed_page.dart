@@ -71,12 +71,12 @@ class _FeedPageState extends State<FeedPage> {
         _imagePaths != null && _imageIndex == (_imagePaths!.length - 1);
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Feed')),
-      //   appBar: AppBar(
-      //   title: const Text('Feed'),
-      //   backgroundColor: scheme.primary, // buildColorTile('primary')
-      //   foregroundColor: scheme.onPrimary, // buildColorTile('onPrimary')
-      // ),
+      //appBar: AppBar(title: const Text('Feed')),
+      appBar: AppBar(
+        title: const Text('Feed'),
+        backgroundColor: scheme.primary, // buildColorTile('primary')
+        foregroundColor: scheme.onPrimary, // buildColorTile('onPrimary')
+      ),
       body: Center(
         child:
             !_initialized || _imagePaths == null
