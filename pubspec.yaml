@@ -80,5 +80,6 @@ flutter:
      - assets/img/momo3.jpg
      - assets/img/momo4.jpg
      - assets/img/corridor.jpg
+     - assets/processed_image.png
 
 

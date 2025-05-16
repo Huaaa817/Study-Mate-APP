@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         'POST',
         Uri.parse('https://api.remove.bg/v1.0/removebg'),
       );
-      request.headers['X-Api-Key'] = 'Q8a1jbLGaGvaf77ZKq89PgUm'; // 自己的 Key
+      //request.headers['X-Api-Key'] = 'eXUFPyo75edeoDHaq15xwW7N'; // 自己的 Key
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',

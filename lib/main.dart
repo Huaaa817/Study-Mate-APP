@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
+import 'package:flutter_app/yuhung_try/try_flow_yuhung.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -21,18 +22,18 @@ void main() async {
     // 正確使用 await
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<NavigationService>(create: (_) => NavigationService()),
-        ChangeNotifierProvider<StudyDurationProvider>(
-          create: (_) => StudyDurationProvider(),
-        ),
-      ],
-      child: const App(),
-    ),
-  );
+  runApp(MaterialApp(home: AnimatedImageFromFlow()));
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       Provider<NavigationService>(create: (_) => NavigationService()),
+  //       ChangeNotifierProvider<StudyDurationProvider>(
+  //         create: (_) => StudyDurationProvider(),
+  //       ),
+  //     ],
+  //     child: const App(),
+  //   ),
+  // );
 }
 
 class App extends StatelessWidget {
