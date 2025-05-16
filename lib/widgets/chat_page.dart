@@ -26,7 +26,7 @@ class _ChatPageState extends State<ChatPage> {
       messages.add({
         'sender': 'user',
         'message': userMessage,
-        'time': DateTime.now().toIso8601String()
+        'time': DateTime.now().toIso8601String(),
       });
       _controller.clear();
     });
@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
       messages.add({
         'sender': 'ai',
         'message': aiResponse,
-        'time': DateTime.now().toIso8601String()
+        'time': DateTime.now().toIso8601String(),
       });
     });
   }
@@ -90,28 +90,43 @@ class _ChatPageState extends State<ChatPage> {
                     final message = messages[index];
                     final isUser = message['sender'] == 'user';
                     final parsedTime = DateTime.tryParse(message['time'] ?? '');
-                    final formattedTime = parsedTime != null
-                        ? DateFormat.jm().format(parsedTime)
-                        : '';
+                    final formattedTime =
+                        parsedTime != null
+                            ? DateFormat.jm().format(parsedTime)
+                            : '';
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4.0,
+                        horizontal: 8.0,
+                      ),
                       child: Align(
-                        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment:
+                            isUser
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
                         child: Container(
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 5)],
+                            boxShadow: [
+                              BoxShadow(color: Colors.black26, blurRadius: 5),
+                            ],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(message['message'] ?? '', style: const TextStyle(fontSize: 16)),
+                              Text(
+                                message['message'] ?? '',
+                                style: const TextStyle(fontSize: 16),
+                              ),
                               Text(
                                 formattedTime,
-                                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ],
                           ),
@@ -130,7 +145,9 @@ class _ChatPageState extends State<ChatPage> {
                         controller: _controller,
                         decoration: const InputDecoration(
                           hintText: "輸入訊息",
-                          border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
                         ),
                       ),
                     ),

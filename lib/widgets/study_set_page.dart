@@ -44,7 +44,7 @@ class StudySetPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const AppBottomNavigationBar(),
+      //bottomNavigationBar: const AppBottomNavigationBar(),
     );
   }
 }

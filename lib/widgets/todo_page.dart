@@ -104,7 +104,7 @@ class _TodoPageState extends State<TodoPage> {
           ],
         ),
       ),
-      bottomNavigationBar: AppBottomNavigationBar(),
+      //bottomNavigationBar: AppBottomNavigationBar(),
     );
   }
 }
