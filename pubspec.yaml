@@ -79,7 +79,17 @@ flutter:
      - assets/img/momo2.jpg
      - assets/img/momo3.jpg
      - assets/img/momo4.jpg
+     - assets/img/ice_cream1.jpg
+     - assets/img/ice_cream2.jpg
+     - assets/img/ice_cream3.jpg
+     - assets/img/ice_cream4.jpg
+     - assets/img/meat1.jpg
+     - assets/img/meat2.jpg
+     - assets/img/meat3.jpg
+     - assets/img/meat4.jpg
      - assets/img/corridor.jpg
      - assets/processed_image.png
+     - assets/img/home_bg.jpg
+
 
 

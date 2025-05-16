@@ -10,7 +10,7 @@ import 'package:flutter_app/yuhung_try/try_flow_yuhung.dart';
 final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.dark,
+    brightness: Brightness.light,
     seedColor: const Color.fromARGB(255, 193, 82, 110),
   ),
   textTheme: GoogleFonts.latoTextTheme(),
