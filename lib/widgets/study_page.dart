@@ -143,6 +143,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
       body: Stack(
         children: [
           if (_backgroundWidget != null) _backgroundWidget!,
+
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             left: 16,
@@ -160,6 +161,32 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                   fontSize: 18,
                   color: scheme.onPrimaryContainer,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          // 🔽 這是新增的「返回首頁」按鈕
+        Positioned(
+            bottom: 40, // 距離底部 40 pixels
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  GoRouter.of(context).go('/home');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: scheme.primary,
+                  foregroundColor: scheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  '結束專注',
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),

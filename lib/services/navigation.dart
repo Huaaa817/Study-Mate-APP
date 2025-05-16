@@ -7,13 +7,25 @@ import 'package:flutter_app/widgets/home_page.dart';
 import 'package:flutter_app/widgets/chat_page.dart';
 import 'package:flutter_app/widgets/feed_page.dart';
 import 'package:flutter_app/widgets/achievement_page.dart';
+import 'package:flutter_app/widgets/todo_rewards_page.dart'; // 確保有 import
+
 
 final routerConfig = GoRouter(
   routes: <RouteBase>[
     GoRoute(
+      path: '/home',
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: HomePage()),
+    ),
+    GoRoute(
       path: '/todo',
       pageBuilder:
           (context, state) => const NoTransitionPage<void>(child: TodoPage()),
+    ),
+    GoRoute(
+      path: '/todo_rewards',
+      pageBuilder: (context, state) =>
+          const NoTransitionPage<void>(child: TodoRewardsPage()),
     ),
     GoRoute(
       path: '/studyset',
@@ -22,9 +34,14 @@ final routerConfig = GoRouter(
               const NoTransitionPage<void>(child: StudySetPage()),
     ),
     GoRoute(
-      path: '/home',
+      path: '/study',
       pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: HomePage()),
+          (context, state) => const NoTransitionPage<void>(child: StudyPage()),
+    ),
+    GoRoute(
+      path: '/feed',
+      pageBuilder:
+          (context, state) => const NoTransitionPage<void>(child: FeedPage()),
     ),
     GoRoute(
       path: '/chat',
@@ -37,16 +54,6 @@ final routerConfig = GoRouter(
       pageBuilder:
           (context, state) =>
               const NoTransitionPage<void>(child: AchievementPage()),
-    ),
-    GoRoute(
-      path: '/study',
-      pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: StudyPage()),
-    ),
-    GoRoute(
-      path: '/feed',
-      pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: FeedPage()),
     ),
   ],
   initialLocation: '/home', // 預設顯示 HomePage
