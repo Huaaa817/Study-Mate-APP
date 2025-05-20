@@ -44,7 +44,7 @@
 //     return MaterialApp.router(
 //       theme: theme,
 //       routerConfig: routerConfig,
-//       restorationScopeId: 'app',
+//       restorationScopeId: 'app',S
 //     );
 //   }
 // }import 'package:flutter/material.dart';

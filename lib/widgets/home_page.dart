@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/services/fetch_chat.dart';
 import 'package:flutter_app/view_models/user_id_vm.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
+import 'dart:typed_data';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -80,19 +82,95 @@ class _HomePageState extends State<HomePage> {
                 // 🔥 顯示從 Firestore 取得的圖片 URL
                 viewModel.userImageUrl == null
                     ? const CircularProgressIndicator()
-                    : Image.network(
-                      viewModel.userImageUrl!,
-                      width: 250,
-                      height: 250,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Text('圖片載入失敗');
-                      },
-                    ),
+                    : _AnimatedImageFromUrl(url: viewModel.userImageUrl!),
+                // : Image.network(
+                //   viewModel.userImageUrl!,
+                //   width: 250,
+                //   height: 250,
+                //   fit: BoxFit.contain,
+                //   errorBuilder: (context, error, stackTrace) {
+                //     return const Text('圖片載入失敗');
+                //   },
+                // ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AnimatedImageFromUrl extends StatefulWidget {
+  final String url;
+
+  const _AnimatedImageFromUrl({Key? key, required this.url}) : super(key: key);
+
+  @override
+  State<_AnimatedImageFromUrl> createState() => _AnimatedImageFromUrlState();
+}
+
+class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
+  int _currentFrame = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startFrameLoop();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startFrameLoop() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        _currentFrame = (_currentFrame + 1) % 4;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.url.isEmpty) {
+      return const Text("圖片網址無效");
+    }
+
+    return SizedBox(
+      width: 400,
+      height: 400,
+      child: ClipRect(
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final height = constraints.maxHeight;
+              final double scale = 2.0;
+
+              final dx = (_currentFrame % 2) * width / 2;
+              final dy = (_currentFrame ~/ 2) * height / 2;
+
+              return Transform(
+                transform:
+                    Matrix4.identity()
+                      ..scale(scale, scale)
+                      ..translate(-dx, -dy),
+                child: Image.network(
+                  widget.url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Text('圖片載入失敗');
+                  },
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
