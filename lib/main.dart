@@ -55,7 +55,8 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
-import 'package:flutter_app/view_models/user_id_vm.dart'; // ← 加這個
+import 'package:flutter_app/view_models/user_id_vm.dart';
+import 'package:flutter_app/view_models/todo_list_vm.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -77,9 +78,11 @@ void main() async {
           create: (_) => StudyDurationProvider(),
         ),
         ChangeNotifierProvider<UserIdInputViewModel>(
-          // ← ✅ 加上這段
           create: (_) => UserIdInputViewModel(),
         ),
+        // ChangeNotifierProvider<TodoListViewModel>(
+        //   create: (_) => TodoListViewModel(TodoListRepository(), userId),
+        // ),
       ],
       child: const App(),
     ),
