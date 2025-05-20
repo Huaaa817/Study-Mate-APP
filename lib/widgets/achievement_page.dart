@@ -9,7 +9,7 @@ class AchievementPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Achievement')),
       body: const Center(child: Text('Achievement Page')),
-      bottomNavigationBar: const AppBottomNavigationBar(),
+      //bottomNavigationBar: const AppBottomNavigationBar(),
     );
   }
 }

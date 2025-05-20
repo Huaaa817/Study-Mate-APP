@@ -43,6 +43,8 @@ dependencies:
   dio: ^5.3.2
   path_provider: ^2.1.5
   path: ^1.9.0
+  firebase_storage: ^12.4.4
+
 
   google_fonts: ^6.2.1
   provider: ^6.1.2
@@ -88,6 +90,8 @@ flutter:
      - assets/img/meat3.jpg
      - assets/img/meat4.jpg
      - assets/img/corridor.jpg
+     - assets/processed_image.png
      - assets/img/home_bg.jpg
+
 
 

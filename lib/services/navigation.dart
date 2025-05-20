@@ -7,60 +7,111 @@ import 'package:flutter_app/widgets/home_page.dart';
 import 'package:flutter_app/widgets/chat_page.dart';
 import 'package:flutter_app/widgets/feed_page.dart';
 import 'package:flutter_app/widgets/achievement_page.dart';
-import 'package:flutter_app/widgets/todo_rewards_page.dart'; // 確保有 import
-
+import 'package:flutter_app/widgets/todo_rewards_page.dart';
+import 'package:flutter_app/widgets/user_id_input_page.dart'; // 新增
+import 'package:flutter_app/widgets/generate_page.dart'; // 新增
+import 'package:flutter_app/widgets/navigation_scaffold.dart';
 
 final routerConfig = GoRouter(
   routes: <RouteBase>[
     GoRoute(
+      path: '/user_id_input',
+      pageBuilder:
+          (context, state) =>
+              const NoTransitionPage<void>(child: UserIdInputPage()),
+    ),
+    GoRoute(
+      path: '/generate',
+      pageBuilder:
+          (context, state) =>
+              const NoTransitionPage<void>(child: GeneratePage()),
+    ),
+    GoRoute(
       path: '/home',
       pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: HomePage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const HomePage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/todo',
       pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: TodoPage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const TodoPage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/todo_rewards',
-      pageBuilder: (context, state) =>
-          const NoTransitionPage<void>(child: TodoRewardsPage()),
+      pageBuilder:
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const TodoRewardsPage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/studyset',
       pageBuilder:
-          (context, state) =>
-              const NoTransitionPage<void>(child: StudySetPage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const StudySetPage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/study',
       pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: StudyPage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const StudyPage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/feed',
       pageBuilder:
-          (context, state) => const NoTransitionPage<void>(child: FeedPage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const FeedPage(),
+            ),
+          ),
     ),
     GoRoute(
       path: '/chat',
       pageBuilder:
-          (context, state) =>
-              NoTransitionPage<void>(child: ChatPage(userPersonality: '可愛')),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: ChatPage(userPersonality: '可愛'),
+            ),
+          ),
     ),
     GoRoute(
       path: '/achievement',
       pageBuilder:
-          (context, state) =>
-              const NoTransitionPage<void>(child: AchievementPage()),
+          (context, state) => NoTransitionPage<void>(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: const AchievementPage(),
+            ),
+          ),
     ),
   ],
-  initialLocation: '/home', // 預設顯示 HomePage
+  initialLocation: '/user_id_input', // 修改初始頁面
   debugLogDiagnostics: true,
   redirect: (context, state) {
     if (state.uri.path == '/') {
-      return '/home'; // 根路徑重定向到 /home
+      return '/user_id_input';
     }
     return null;
   },
@@ -69,25 +120,3 @@ final routerConfig = GoRouter(
         body: Center(child: Text('Page not found: ${state.uri.path}')),
       ),
 );
-
-enum AppTab { todo, studyset, home, chat, achievement }
-
-class NavigationService {
-  late final GoRouter _router;
-
-  NavigationService() {
-    _router = routerConfig;
-  }
-
-  String _currentPath(BuildContext context) {
-    return GoRouterState.of(context).uri.path;
-  }
-
-  void goToTab({required AppTab tab}) {
-    _router.go('/${tab.name}');
-  }
-
-  bool isCurrentTab(BuildContext context, AppTab tab) {
-    return _currentPath(context) == '/${tab.name}';
-  }
-}
