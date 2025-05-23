@@ -120,6 +120,7 @@ class UserRepository {
   /// ✅ 新版：從 Firestore 讀取 image URL
   Future<String?> getUserImage(String userId) async {
     final doc = await _firestore.collection('users').doc(userId).get();
+    print(doc.data()?['imageUrl'] as String?);
     return doc.data()?['imageUrl'] as String?;
   }
 }
