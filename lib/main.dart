@@ -175,6 +175,8 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
+import '/providers/study_duration_provider.dart';
+import 'package:flutter_app/view_models/todo_list_vm.dart';
 import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'providers/study_duration_provider.dart';
@@ -197,6 +199,14 @@ class RootApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
         Provider(create: (_) => AuthenticationService()),
+
+        ChangeNotifierProvider<StudyDurationProvider>(
+          create: (_) => StudyDurationProvider(),
+        ),
+
+        // ChangeNotifierProvider<TodoListViewModel>(
+        //   create: (_) => TodoListViewModel(TodoListRepository(), userId),
+        // ),
       ],
       child: const App(),
     );
