@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/services/fetch_chat.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
+import 'package:flutter_app/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
@@ -37,6 +38,25 @@ class _HomePageState extends State<HomePage> {
     final viewModel = context.watch<MeViewModel>();
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Provider.of<AuthenticationService>(
+                context,
+                listen: false,
+              ).logOut();
+            },
+            icon: Icon(
+              Icons.exit_to_app,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           Positioned.fill(
