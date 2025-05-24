@@ -176,17 +176,15 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
-import 'package:flutter_app/view_models/todo_list_vm.dart';
+import 'view_models/todo_list_vm.dart';
+import 'repositories/todo_list_repo.dart';
 import 'services/authentication.dart';
 import 'services/navigation.dart';
-import 'providers/study_duration_provider.dart';
 import 'view_models/me_wm.dart';
-// 確保你有 routerConfig 函式
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   runApp(const RootApp());
 }
 
@@ -199,14 +197,6 @@ class RootApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
         Provider(create: (_) => AuthenticationService()),
-
-        ChangeNotifierProvider<StudyDurationProvider>(
-          create: (_) => StudyDurationProvider(),
-        ),
-
-        // ChangeNotifierProvider<TodoListViewModel>(
-        //   create: (_) => TodoListViewModel(TodoListRepository(), userId),
-        // ),
       ],
       child: const App(),
     );
@@ -233,6 +223,9 @@ class App extends StatelessWidget {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) => MeViewModel(userId!)),
+              ChangeNotifierProvider(
+                create: (_) => TodoListViewModel(TodoListRepository(), userId!),
+              ),
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',

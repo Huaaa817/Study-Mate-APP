@@ -15,8 +15,8 @@ class TodoListViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> addTodo(String title) async {
-    await _repository.addTodo(_userId, title);
+  Future<void> addTodo(String title, {DateTime? dueDate}) async {
+    await _repository.addTodo(userId: _userId, title: title, dueDate: dueDate);
   }
 
   Future<void> deleteTodo(String id) async {
@@ -25,5 +25,18 @@ class TodoListViewModel extends ChangeNotifier {
 
   Future<void> toggleTodo(String id, bool value) async {
     await _repository.toggleTodo(_userId, id, value);
+  }
+
+  Future<void> updateTodo(
+    String id,
+    String newTitle,
+    DateTime? newDueDate,
+  ) async {
+    await _repository.updateTodo(
+      userId: _userId,
+      docId: id,
+      newTitle: newTitle,
+      newDueDate: newDueDate,
+    );
   }
 }
