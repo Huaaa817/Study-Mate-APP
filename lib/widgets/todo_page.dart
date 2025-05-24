@@ -3,9 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:flutter_app/widgets/todo_set_page.dart';
 import 'package:flutter_app/widgets/todo_tile.dart';
 import 'package:flutter_app/view_models/todo_list_vm.dart';
+import 'package:flutter_app/widgets/todo_rewards_page.dart';
 
-class TodoPage extends StatelessWidget {
+class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
+
+  @override
+  State<TodoPage> createState() => _TodoPageState();
+}
+
+class _TodoPageState extends State<TodoPage> {
+  int _completedCount = 0;
 
   void _openAddTodoPage(BuildContext context) {
     Navigator.push(
@@ -45,6 +53,28 @@ class TodoPage extends StatelessWidget {
     );
   }
 
+  void _handleToggle(BuildContext context, String id, bool newValue) async {
+    final vm = Provider.of<TodoListViewModel>(context, listen: false);
+    await vm.toggleTodo(id, newValue);
+
+    if (newValue) {
+      _completedCount++;
+    } else {
+      _completedCount = (_completedCount > 0) ? _completedCount - 1 : 0;
+    }
+
+    if (_completedCount >= 2) {
+      _completedCount = 0;
+      debugPrint('✅ 獎勵條件觸發，即將跳轉 rewards page');
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TodoRewardsPage()),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<TodoListViewModel>(context);
@@ -67,7 +97,8 @@ class TodoPage extends StatelessWidget {
                       dueDate: todo['dueDate']?.toDate(),
                       onDelete: () => vm.deleteTodo(todo['id']),
                       onToggle:
-                          (val) => vm.toggleTodo(todo['id'], val ?? false),
+                          (val) =>
+                              _handleToggle(context, todo['id'], val ?? false),
                       onEdit: () => _openEditTodoPage(context, todo),
                     );
                   },

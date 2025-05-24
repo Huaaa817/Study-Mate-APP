@@ -101,6 +101,8 @@ flutter:
      - assets/img/home_bg.jpg
      - assets/chat.png
      - assets/logo_google.svg
+     - assets/img/default.jpg
+
 
 
 

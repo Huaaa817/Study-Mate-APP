@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '/services/fetch_background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app/view_models/me_wm.dart';
+import 'package:provider/provider.dart';
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -13,26 +13,16 @@ class StudyPage extends StatefulWidget {
 }
 
 class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
-  late int _durationInterval; // 每次跳轉 feed 的時間間隔
-  int _elapsedSeconds = 0; // 累積時間
+  late int _durationInterval;
+  int _elapsedSeconds = 0;
   Timer? _timer;
   bool _initialized = false;
-  String? backgroundImageUrl;
   Widget? _backgroundWidget;
-
-  static int _sceneIndex = 0;
-  final List<String> _sceneDescriptions = [
-    "A quiet university courtyard in the early morning...",
-    "A cozy rooftop under a starry night sky...",
-    "A riverside path beneath blooming cherry blossom trees...",
-    "An indoor Japanese-style study room with tatami flooring...",
-    "A peaceful grassy field under soft golden sunlight...",
-  ];
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // 加入 observer
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -47,7 +37,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
           60;
 
       _startTimer();
-      _fetchBackgroundImage();
+      _loadLatestBackground();
       _initialized = true;
     }
   }
@@ -61,24 +51,65 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
       });
 
       if (_elapsedSeconds % _durationInterval == 0 && _elapsedSeconds != 0) {
-        _timer?.cancel(); // 停止計時器，避免回來後重啟兩個
+        _timer?.cancel();
         _timer = null;
 
-        // 用 push 疊頁，feed 回來後不會重建
-        // GoRouter.of(context).push('/feed?duration=$_durationInterval');
         GoRouter.of(context).push('/feed?duration=$_durationInterval').then((
           _,
         ) {
-          // 當從 feed page 返回時
           if (mounted) _startTimer();
         });
       }
     });
   }
 
+  Future<void> _loadLatestBackground() async {
+    final userId = Provider.of<MeViewModel>(context, listen: false).myId;
+    final ref = FirebaseFirestore.instance
+        .collection('apps/study_mate/users')
+        .doc(userId)
+        .collection('backgrounds')
+        .orderBy('createdAt', descending: true)
+        .limit(1);
+
+    try {
+      final snapshot = await ref.get();
+      if (snapshot.docs.isNotEmpty && snapshot.docs.first['imageUrl'] != null) {
+        final imageUrl = snapshot.docs.first['imageUrl'];
+        setState(() {
+          _backgroundWidget = Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          );
+        });
+      } else {
+        setState(() {
+          _backgroundWidget = Image.asset(
+            'assets/img/default.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          );
+        });
+      }
+    } catch (e) {
+      print('Failed to load background: $e');
+      setState(() {
+        _backgroundWidget = Image.asset(
+          'assets/default.jpg',
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      });
+    }
+  }
+
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // 移除 observer
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
   }
@@ -86,53 +117,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
     final remainingSeconds = seconds % 60;
-    final mm = minutes.toString().padLeft(2, '0');
-    final ss = remainingSeconds.toString().padLeft(2, '0');
-    return '$mm:$ss';
-  }
-
-  void _fetchBackgroundImage() async {
-    try {
-      final String description = _sceneDescriptions[_sceneIndex];
-      _sceneIndex = (_sceneIndex + 1) % _sceneDescriptions.length;
-
-      final imageUrl = await fetchBackground(description: description);
-      Widget imageWidget;
-
-      if (imageUrl.startsWith('data:image')) {
-        final base64Data = imageUrl.split(',').last;
-        final Uint8List bytes = base64Decode(base64Data);
-        imageWidget = Image.memory(
-          bytes,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-        );
-      } else {
-        imageWidget = Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const Center(child: CircularProgressIndicator());
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(
-              child: Icon(Icons.broken_image, size: 50, color: Colors.red),
-            );
-          },
-        );
-      }
-
-      setState(() {
-        backgroundImageUrl = imageUrl;
-        _backgroundWidget = imageWidget;
-      });
-    } catch (e) {
-      print("Failed to fetch background image: $e");
-    }
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -166,9 +151,8 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
             ),
           ),
 
-          // 🔽 這是新增的「返回首頁」按鈕
-        Positioned(
-            bottom: 40, // 距離底部 40 pixels
+          Positioned(
+            bottom: 40,
             left: 0,
             right: 0,
             child: Center(
@@ -179,15 +163,15 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: scheme.primary,
                   foregroundColor: scheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: const Text(
-                  '結束專注',
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: const Text('結束專注', style: TextStyle(fontSize: 16)),
               ),
             ),
           ),

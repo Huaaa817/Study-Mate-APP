@@ -30,10 +30,23 @@ class _TodoSetPageState extends State<TodoSetPage> {
 
   void _handleAdd() {
     final text = _controller.text.trim();
-    if (text.isNotEmpty) {
-      widget.onAdd(text, _selectedDate);
-      Navigator.pop(context);
+
+    if (text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('請輸入待辦事項')));
+      return;
     }
+
+    if (_selectedDate == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('請選擇完成日期')));
+      return;
+    }
+
+    widget.onAdd(text, _selectedDate);
+    Navigator.pop(context);
   }
 
   void _pickDate() async {
