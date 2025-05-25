@@ -83,15 +83,15 @@ GoRouter routerConfig(bool isLoggedIn) {
               ),
             ),
       ),
+
       GoRoute(
         path: '/chat',
-        pageBuilder:
-            (context, state) => NoTransitionPage(
-              child: NavigationScaffold(
-                currentPath: state.uri.path,
-                child: ChatPage(userPersonality: '可愛'),
-              ),
-            ),
+        pageBuilder: (context, state) => NoTransitionPage(
+          child: NavigationScaffold(
+            currentPath: state.uri.path,
+            child: const ChatPage(),
+          ),
+        ),
       ),
       GoRoute(
         path: '/achievement',
