@@ -4,6 +4,7 @@ import 'package:flutter_app/view_models/me_wm.dart';
 import 'package:flutter_app/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,6 +26,28 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadUserImage() async {
     final viewModel = context.read<MeViewModel>();
     await viewModel.loadUserImage();
+
+    if (viewModel.userImageUrl == null || viewModel.userImageUrl!.isEmpty) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text('No Image Found'),
+                content: const Text('Go to generate'),
+                actions: [
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      context.go('/generate');
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+        );
+      }
+    }
   }
 
   Future<String> getGreeting() async {
@@ -93,12 +116,22 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                viewModel.userImageUrl == null
-                    ? const CircularProgressIndicator()
-                    : _AnimatedImageFromUrl(url: viewModel.userImageUrl!),
+                if (viewModel.userImageUrl == null)
+                  const CircularProgressIndicator(),
               ],
             ),
           ),
+
+          // 這裡用 Positioned 把圖片固定到底部中央
+          if (viewModel.userImageUrl != null)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: _AnimatedImageFromUrl(url: viewModel.userImageUrl!),
+              ),
+            ),
         ],
       ),
     );
