@@ -5,6 +5,7 @@ import 'package:flutter_app/services/authentication.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,12 +16,49 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Future<String>? _greetingFuture;
+  bool _hasShownImageDialog = false;
 
   @override
   void initState() {
     super.initState();
     _greetingFuture = getGreeting();
-    _loadUserImage();
+    _checkDialogShownThenLoadImage();
+  }
+
+  Future<String> getGreeting() async {
+    const personality = "可愛";
+    return await fetchGreeting(personality);
+  }
+
+  Future<void> _checkDialogShownThenLoadImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    _hasShownImageDialog = prefs.getBool('hasShownImageDialog') ?? false;
+
+    await _loadUserImage();
+
+    if (!_hasShownImageDialog) {
+      await prefs.setBool('hasShownImageDialog', true);
+    }
+  }
+
+  void _showLoadingDialog() {
+    if (!_hasShownImageDialog) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              title: Text('圖片載入中'),
+              content: Text('請稍候...'),
+            ),
+      );
+    }
+  }
+
+  void _hideLoadingDialog() {
+    if (!_hasShownImageDialog && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
   }
 
   Future<void> _loadUserImage() async {
@@ -32,7 +70,7 @@ class _HomePageState extends State<HomePage> {
         showDialog(
           context: context,
           builder:
-              (context) => AlertDialog(
+              (_) => AlertDialog(
                 title: const Text('No Image Found'),
                 content: const Text('Go to generate'),
                 actions: [
@@ -47,12 +85,9 @@ class _HomePageState extends State<HomePage> {
               ),
         );
       }
+    } else {
+      _showLoadingDialog();
     }
-  }
-
-  Future<String> getGreeting() async {
-    const personality = "可愛";
-    return await fetchGreeting(personality);
   }
 
   @override
@@ -72,10 +107,7 @@ class _HomePageState extends State<HomePage> {
                 listen: false,
               ).logOut();
             },
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            icon: Icon(Icons.exit_to_app, color: scheme.primary),
           ),
         ],
       ),
@@ -121,15 +153,16 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-
-          // 這裡用 Positioned 把圖片固定到底部中央
           if (viewModel.userImageUrl != null)
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
               child: Center(
-                child: _AnimatedImageFromUrl(url: viewModel.userImageUrl!),
+                child: _AnimatedImageFromUrl(
+                  url: viewModel.userImageUrl!,
+                  onImageDisplayed: _hideLoadingDialog,
+                ),
               ),
             ),
         ],
@@ -140,8 +173,13 @@ class _HomePageState extends State<HomePage> {
 
 class _AnimatedImageFromUrl extends StatefulWidget {
   final String url;
+  final VoidCallback onImageDisplayed;
 
-  const _AnimatedImageFromUrl({super.key, required this.url});
+  const _AnimatedImageFromUrl({
+    super.key,
+    required this.url,
+    required this.onImageDisplayed,
+  });
 
   @override
   State<_AnimatedImageFromUrl> createState() => _AnimatedImageFromUrlState();
@@ -150,11 +188,23 @@ class _AnimatedImageFromUrl extends StatefulWidget {
 class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
   int _currentFrame = 0;
   Timer? _timer;
+  bool _imageShown = false;
 
   @override
   void initState() {
     super.initState();
     _startFrameLoop();
+
+    final image = NetworkImage(widget.url);
+    final stream = image.resolve(const ImageConfiguration());
+    stream.addListener(
+      ImageStreamListener((_, __) {
+        if (!_imageShown) {
+          _imageShown = true;
+          widget.onImageDisplayed();
+        }
+      }),
+    );
   }
 
   @override
@@ -200,10 +250,6 @@ class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
                 child: Image.network(
                   widget.url,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(child: CircularProgressIndicator());
-                  },
                   errorBuilder: (context, error, stackTrace) {
                     return const Text('圖片載入失敗');
                   },
