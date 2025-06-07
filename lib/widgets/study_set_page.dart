@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '/providers/study_duration_provider.dart';
+import '/providers/background_provider.dart';
+import '/view_models/me_wm.dart';
 
 class StudySetPage extends StatelessWidget {
   const StudySetPage({super.key});
@@ -9,6 +11,18 @@ class StudySetPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final durationController = TextEditingController();
+
+    // ✅ 預先載入背景圖片，並加上 log
+    final userId = context.read<MeViewModel>().myId;
+    final bgVM = context.read<BackgroundViewModel>();
+    print('[LOG] StudySetPage: 強制預取最新背景...');
+    bgVM.fetchBackground(userId, context).then((_) {
+      if (bgVM.imageUrl != null) {
+        print('[LOG] StudySetPage: ✅ 預取完成 imageUrl = ${bgVM.imageUrl}');
+      } else {
+        print('[LOG] StudySetPage: ❌ 預取失敗或無圖片');
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Study')),
@@ -43,7 +57,6 @@ class StudySetPage extends StatelessWidget {
           ],
         ),
       ),
-      //bottomNavigationBar: const AppBottomNavigationBar(),
     );
   }
 }

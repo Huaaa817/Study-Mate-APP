@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_app/widgets/todo_set_page.dart';
 import 'package:flutter_app/widgets/todo_tile.dart';
 import 'package:flutter_app/view_models/todo_list_vm.dart';
-import 'package:flutter_app/widgets/todo_rewards_page.dart';
+//import 'package:flutter_app/widgets/todo_rewards_page.dart';
+import 'package:go_router/go_router.dart';
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -67,10 +68,7 @@ class _TodoPageState extends State<TodoPage> {
       _completedCount = 0;
       debugPrint('✅ 獎勵條件觸發，即將跳轉 rewards page');
       if (context.mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const TodoRewardsPage()),
-        );
+        GoRouter.of(context).go('/todo_rewards');
       }
     }
   }

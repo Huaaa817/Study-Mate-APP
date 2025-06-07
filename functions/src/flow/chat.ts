@@ -2,7 +2,7 @@ import { z } from "genkit";
 import { ai } from "../config";
 import { gemini15Flash } from "@genkit-ai/vertexai";
 
-// 定義生成打招呼語的 Prompt
+// 定義 Prompt
 const greetingGenerator = ai.definePrompt({
     model: gemini15Flash,
     name: 'greetingGenerator',
@@ -14,7 +14,7 @@ const greetingGenerator = ai.definePrompt({
     },
 });
 
-// 定義 Flow 來處理生成過程
+// 定義 Flow 
 export const greetingFlow = ai.defineFlow({
     name: 'greetingFlow',
     inputSchema: z.object({
@@ -42,8 +42,7 @@ export const greetingFlow = ai.defineFlow({
             throw new Error("Failed to retrieve content from the response.");
         }
     } catch (error) {
-        // 捕獲並打印錯誤信息
         console.error("Error in greetingFlow:", error);
-        throw error;  // 重新拋出錯誤
+        throw error;
     }
 });
