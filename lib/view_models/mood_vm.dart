@@ -22,8 +22,7 @@ class MoodViewModel extends ChangeNotifier {
     final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     // 讀取今日專注秒數與是否有聊天
-    final todayStudyLogs = await _studyRepo.getDailyStudyLog(userId);
-    final todaySeconds = todayStudyLogs[today] ?? 0;
+    final todaySeconds = await _repo.getDailyStudySeconds(userId, today);
     final hasChat = await _repo.checkIfUserChattedToday();
 
     int baseMood;
@@ -50,6 +49,11 @@ class MoodViewModel extends ChangeNotifier {
       baseMood: baseMood,
     );
 
+    // 印出 newStatus 內容
+    //debugPrint('loadMood - newStatus.value: ${newStatus.value}, updatedDate: ${newStatus.updatedDate}, baseMood: ${newStatus.baseMood}');
+    debugPrint('loadMood called!~~~~~~~');
+
+
     await _repo.saveMood(newStatus);
     _mood = mood;
     _latestStatus = newStatus;
@@ -66,6 +70,7 @@ class MoodViewModel extends ChangeNotifier {
 
     // 根據總秒數 + 有無聊天，重新計算 mood
     final hasChat = await _repo.checkIfUserChattedToday();
+    debugPrint('updateMood - hasChat: $hasChat');
 
     final baseMood = _calculateMoodFromSeconds(totalSeconds, _latestStatus.baseMood);
     final mood = (baseMood + (hasChat ? 1 : 0)).clamp(0, 5);
@@ -75,6 +80,8 @@ class MoodViewModel extends ChangeNotifier {
       updatedDate: today,
       baseMood: baseMood,
     );
+    // 印出 newStatus 內容
+    // debugPrint('updateMood - newStatus.value: ${newStatus.value}, updatedDate: ${newStatus.updatedDate}, baseMood: ${newStatus.baseMood}');
 
     await _repo.saveMood(newStatus);
     _mood = mood;
@@ -82,9 +89,10 @@ class MoodViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// 心情條邏輯：每滿 30 分鐘（1800 秒）加一格，最多加到 3 格
+  /// 心情條邏輯：每滿 10 秒加一格，最多加2格
   int _calculateMoodFromSeconds(int seconds, int base) {
-    final additional = (seconds~/30).clamp(0, 3); // 最多 +3
+    final additional = (seconds~/100).clamp(0, 3); // 最多 +3
+    debugPrint('_calculateMoodFromSeconds - seconds: $seconds, additional: $additional, base: $base');
     return (base + additional).clamp(0, 4);
   }
 }

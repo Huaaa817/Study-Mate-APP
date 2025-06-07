@@ -3,7 +3,7 @@ import { ai } from "../config";
 import { gemini15Flash } from "@genkit-ai/vertexai";
 
 // A variable to store the conversation history
-let conversationHistory: string[] = [];
+// let conversationHistory: string[] = [];
 
 // Define a prompt to generate chat responses
 const chattingGenerator = ai.definePrompt({
@@ -17,8 +17,9 @@ const chattingGenerator = ai.definePrompt({
       以下是對話歷史（角色用「我」和「她」表示）：
       {{conversationHistory}}
       對方剛說：{{message}}
-      請用「她」的語氣回覆他，只輸出對話內容，不要任何多餘說明，並且用「繁體中文」回答。`,
-
+      請用「她」的語氣回覆他，根據對話歷史持續進行連貫的聊天，並記住雙方聊過的內容，避免重複提問或回應。
+      並且用「繁體中文」回答。`,
+      // 只輸出對話內容，不要任何多餘說明，
   input: {
     schema: z.object({
       message: z.string(),
@@ -39,16 +40,16 @@ export const chattingFlow = ai.defineFlow({
 }, async (input) => {
   try {
     // Add the user's message to the conversation history
-    conversationHistory.push(input.message);
+    // conversationHistory.push(input.message);
 
     // Call the prompt and provide conversation history as context
     const response = await chattingGenerator({
       message: input.message,
       personality: input.personality,
-      conversationHistory,
+      conversationHistory: input.conversationHistory,
     });
 
-    console.log('Full Response:', response);
+    // console.log('Full Response:', response);
 
     // Safely extract and combine text from content array
     const contentArray = response?.message?.content;
@@ -64,7 +65,7 @@ export const chattingFlow = ai.defineFlow({
     }
 
     // Add the AI's reply to the conversation history
-    conversationHistory.push(chatting);
+    // conversationHistory.push(chatting);
 
     return { chatting };
   } catch (error) {

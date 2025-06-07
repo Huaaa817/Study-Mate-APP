@@ -25,7 +25,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _greetingFuture = getGreeting();
     _checkDialogShownThenLoadImage();
-    context.read<MoodViewModel>().loadMood();
+    // context.read<MoodViewModel>().loadMood();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MoodViewModel>().loadMood();
+      debugPrint('Calling loadMood...');
+    });
   }
 
   Future<String> getGreeting() async {
@@ -89,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
     } else {
-      _showLoadingDialog();
+    _showLoadingDialog();
     }
   }
 
@@ -129,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, moodVM, _) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(4, (index) {
+                      children: List.generate(5, (index) {
                         return Icon(
                           Icons.favorite,
                           color: index < moodVM.mood ? Colors.red : Colors.grey,

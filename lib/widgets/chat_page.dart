@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '/view_models/chat_vm.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class ChatPage extends StatelessWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -91,8 +93,16 @@ class _ChatViewBodyState extends State<ChatViewBody> {
                   itemBuilder: (context, index) {
                     final msg = vm.messages[index];
                     final isUser = msg['sender'] == 'user';
-                    final parsedTime =
-                        DateTime.tryParse(msg['time'] ?? '') ?? DateTime.now();
+
+                      DateTime parsedTime;
+                      final rawTime = msg['time'];
+                      if (rawTime is Timestamp) {
+                        parsedTime = rawTime.toDate();
+                      } else if (rawTime is String) {
+                        parsedTime = DateTime.tryParse(rawTime) ?? DateTime.now();
+                      } else {
+                        parsedTime = DateTime.now();
+                      }
                     final formattedTime = DateFormat.jm().format(parsedTime);
 
                     return Padding(
