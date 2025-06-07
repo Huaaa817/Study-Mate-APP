@@ -181,10 +181,19 @@ import 'view_models/todo_list_vm.dart';
 import 'repositories/todo_list_repo.dart';
 import 'view_models/study_vm.dart';
 import 'repositories/study_repo.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'view_models/me_wm.dart';
+
+final theme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    brightness: Brightness.light,
+    seedColor: const Color.fromARGB(255, 193, 82, 110),
+  ),
+  textTheme: GoogleFonts.latoTextTheme(),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -237,14 +246,14 @@ class App extends StatelessWidget {
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',
-              theme: ThemeData.light(),
+              theme: theme,
               routerConfig: routerConfig(true),
             ),
           );
         } else {
           return MaterialApp.router(
             restorationScopeId: 'app',
-            theme: ThemeData.light(),
+            theme: theme,
             routerConfig: routerConfig(false),
           );
         }
