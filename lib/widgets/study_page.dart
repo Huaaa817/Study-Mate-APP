@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
 import '/providers/background_provider.dart';
 import 'package:flutter_app/view_models/study_vm.dart';
-import 'package:provider/provider.dart';
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -19,7 +18,6 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
   int _elapsedSeconds = 0;
   Timer? _timer;
   bool _initialized = false;
-  //Widget? _backgroundWidget;
 
   @override
   void initState() {
@@ -39,7 +37,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
           60;
 
       _startTimer();
-      //_loadLatestBackground();
+
       final bgVM = Provider.of<BackgroundViewModel>(context, listen: false);
       if (bgVM.imageUrl != null && bgVM.imageUrl!.isNotEmpty) {
         precacheImage(NetworkImage(bgVM.imageUrl!), context)
@@ -75,50 +73,6 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
     });
   }
 
-  // Future<void> _loadLatestBackground() async {
-  //   final userId = Provider.of<MeViewModel>(context, listen: false).myId;
-  //   final ref = FirebaseFirestore.instance
-  //       .collection('apps/study_mate/users')
-  //       .doc(userId)
-  //       .collection('backgrounds')
-  //       .orderBy('createdAt', descending: true)
-  //       .limit(1);
-
-  //   try {
-  //     final snapshot = await ref.get();
-  //     if (snapshot.docs.isNotEmpty && snapshot.docs.first['imageUrl'] != null) {
-  //       final imageUrl = snapshot.docs.first['imageUrl'];
-  //       setState(() {
-  //         _backgroundWidget = Image.network(
-  //           imageUrl,
-  //           fit: BoxFit.cover,
-  //           width: double.infinity,
-  //           height: double.infinity,
-  //         );
-  //       });
-  //     } else {
-  //       setState(() {
-  //         _backgroundWidget = Image.asset(
-  //           'assets/img/default.jpg',
-  //           fit: BoxFit.cover,
-  //           width: double.infinity,
-  //           height: double.infinity,
-  //         );
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print('Failed to load background: $e');
-  //     setState(() {
-  //       _backgroundWidget = Image.asset(
-  //         'assets/default.jpg',
-  //         fit: BoxFit.cover,
-  //         width: double.infinity,
-  //         height: double.infinity,
-  //       );
-  //     });
-  //   }
-  // }
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -140,13 +94,44 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final bgVM = Provider.of<BackgroundViewModel>(context);
-
     final scheme = Theme.of(context).colorScheme;
+
+    final meVM = Provider.of<MeViewModel>(context);
+    final userImageUrl = meVM.userImageUrl;
 
     return Scaffold(
       body: Stack(
         children: [
           if (bgVM.backgroundWidget != null) bgVM.backgroundWidget!,
+
+          // 將圖片放底部中央，顯示左上角四分之一並放大兩倍
+          if (userImageUrl != null && userImageUrl.isNotEmpty)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: ClipRect(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    widthFactor: 1,
+                    heightFactor: 1,
+                    child: Transform.scale(
+                      scale: 2.0,
+                      alignment: Alignment.topLeft,
+                      child: Image.network(
+                        userImageUrl,
+                        width: 400,
+                        height: 400,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            const Center(child: CircularProgressIndicator()),
 
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
