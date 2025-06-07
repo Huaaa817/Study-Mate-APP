@@ -176,15 +176,25 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
+import '/providers/background_provider.dart';
 import 'view_models/todo_list_vm.dart';
 import 'repositories/todo_list_repo.dart';
 import 'view_models/study_vm.dart';
 import 'repositories/study_repo.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'view_models/me_wm.dart';
 import 'view_models/mood_vm.dart';
+
+final theme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    brightness: Brightness.light,
+    seedColor: const Color.fromARGB(255, 193, 82, 110),
+  ),
+  textTheme: GoogleFonts.latoTextTheme(),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -201,6 +211,7 @@ class RootApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
         Provider(create: (_) => AuthenticationService()),
+        ChangeNotifierProvider(create: (_) => BackgroundViewModel()),
       ],
       child: const App(),
     );
@@ -238,14 +249,14 @@ class App extends StatelessWidget {
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',
-              theme: ThemeData.light(),
+              theme: theme,
               routerConfig: routerConfig(true),
             ),
           );
         } else {
           return MaterialApp.router(
             restorationScopeId: 'app',
-            theme: ThemeData.light(),
+            theme: theme,
             routerConfig: routerConfig(false),
           );
         }

@@ -66,12 +66,7 @@ GoRouter routerConfig(bool isLoggedIn) {
       GoRoute(
         path: '/study',
         pageBuilder:
-            (context, state) => NoTransitionPage(
-              child: NavigationScaffold(
-                currentPath: state.uri.path,
-                child: const StudyPage(),
-              ),
-            ),
+            (context, state) => NoTransitionPage(child: const StudyPage()),
       ),
       GoRoute(
         path: '/feed',

@@ -36,9 +36,31 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
 
   Future<void> _generateRewardImage() async {
     try {
-      final scene = (_sceneDescriptions..shuffle()).first;
       final userId = Provider.of<MeViewModel>(context, listen: false).myId;
 
+      // 🔍 拿到上次的背景描述
+      final backgroundsRef = FirebaseFirestore.instance
+          .collection('apps/study_mate/users')
+          .doc(userId)
+          .collection('backgrounds')
+          .orderBy('createdAt', descending: true)
+          .limit(1);
+
+      final snapshot = await backgroundsRef.get();
+      String? lastScene;
+      if (snapshot.docs.isNotEmpty) {
+        lastScene = snapshot.docs.first['description'] as String?;
+      }
+
+      // 🎲 選擇一個新的 scene，不等於上次的
+      final candidates = List<String>.from(_sceneDescriptions);
+      if (lastScene != null) {
+        candidates.remove(lastScene);
+      }
+      candidates.shuffle();
+      final scene = candidates.first;
+
+      // 🔗 呼叫 API 產生背景圖片
       final imageUrl = await fetchBackground(description: scene);
 
       // 轉 base64 ➝ bytes
@@ -62,16 +84,15 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
       final downloadedBytes = await _waitUntilImageAvailable(downloadUrl);
 
       // 儲存 Firestore metadata
-      final backgroundsRef = FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('apps/study_mate/users')
           .doc(userId)
-          .collection('backgrounds');
-
-      await backgroundsRef.add({
-        'createdAt': FieldValue.serverTimestamp(),
-        'imageUrl': downloadUrl,
-        'description': scene,
-      });
+          .collection('backgrounds')
+          .add({
+            'createdAt': FieldValue.serverTimestamp(),
+            'imageUrl': downloadUrl,
+            'description': scene,
+          });
 
       final imageWidget = Image.memory(downloadedBytes, fit: BoxFit.cover);
 
@@ -134,7 +155,10 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
                     SizedBox(height: 300, child: _imageWidget ?? Container()),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
-                      onPressed: () => GoRouter.of(context).go('/todo'),
+                      onPressed: () {
+                        print('[LOG] 收下按鈕被按下，跳轉到 /todo');
+                        GoRouter.of(context).go('/todo');
+                      },
                       icon: const Icon(Icons.check),
                       label: const Text('收下'),
                       style: ElevatedButton.styleFrom(
