@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
+import 'package:flutter_app/view_models/study_vm.dart';
 import 'package:provider/provider.dart';
 
 class StudyPage extends StatefulWidget {
@@ -111,6 +112,11 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    Provider.of<StudyViewModel>(
+      context,
+      listen: false,
+    ).uploadStudyDuration(_elapsedSeconds);
+
     super.dispose();
   }
 
@@ -157,7 +163,15 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
             right: 0,
             child: Center(
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  final vm = Provider.of<StudyViewModel>(
+                    context,
+                    listen: false,
+                  );
+
+                  if (_elapsedSeconds > 0) {
+                    await vm.uploadStudyDuration(_elapsedSeconds);
+                  }
                   GoRouter.of(context).go('/home');
                 },
                 style: ElevatedButton.styleFrom(
