@@ -11,7 +11,8 @@ import 'package:flutter_app/view_models/mood_vm.dart';
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final MeViewModel viewModel;
+  const HomePage({super.key, required this.viewModel});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -34,8 +35,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<String> getGreeting() async {
+    final userId = widget.viewModel.me?.id ?? widget.viewModel.myId;
     const personality = "可愛";
-    return await fetchGreeting(personality);
+    return await fetchGreeting(personality, userId);
   }
 
   Future<void> _checkDialogShownThenLoadImage() async {

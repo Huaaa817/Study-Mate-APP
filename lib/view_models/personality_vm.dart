@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '/repositories/personality.dart';
 
 class PersonalityViewModel {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final PersonalityRepository _repo = PersonalityRepository();
 
+  /// 🔸 儲存 personality
   Future<void> savePersonality({
     required String userId,
     required String personality,
@@ -23,5 +26,13 @@ class PersonalityViewModel {
       print('❌ Failed to save personality: $e');
       rethrow;
     }
+  }
+
+  /// ✅ 取得指定 ID 的 personality
+  Future<Map<String, dynamic>?> getPersonalityById({
+    required String userId,
+    required String docId,
+  }) {
+    return _repo.getPersonalityById(userId, docId);
   }
 }
