@@ -181,6 +181,7 @@ import 'repositories/todo_list_repo.dart';
 import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'view_models/me_wm.dart';
+import 'view_models/mood_vm.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -225,6 +226,9 @@ class App extends StatelessWidget {
               ChangeNotifierProvider(create: (_) => MeViewModel(userId!)),
               ChangeNotifierProvider(
                 create: (_) => TodoListViewModel(TodoListRepository(), userId!),
+              ),
+              ChangeNotifierProvider(
+                create: (_) => MoodViewModel(userId!),
               ),
             ],
             child: MaterialApp.router(

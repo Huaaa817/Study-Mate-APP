@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_app/view_models/mood_vm.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +25,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _greetingFuture = getGreeting();
     _checkDialogShownThenLoadImage();
+    context.read<MoodViewModel>().loadMood();
   }
 
   Future<String> getGreeting() async {
@@ -121,6 +124,23 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+
+                Consumer<MoodViewModel>(
+                  builder: (context, moodVM, _) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(4, (index) {
+                        return Icon(
+                          Icons.favorite,
+                          color: index < moodVM.mood ? Colors.red : Colors.grey,
+                        );
+                      }),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+
+
                 FutureBuilder<String>(
                   future: _greetingFuture,
                   builder: (context, snapshot) {
