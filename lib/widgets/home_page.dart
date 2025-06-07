@@ -154,19 +154,35 @@ class _HomePageState extends State<HomePage> {
                     } else {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Text(
-                          snapshot.data ?? 'No greeting found',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: scheme.onBackground,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          height: 55, // 可以依實際需要調整高度
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(
+                              255,
+                              255,
+                              255,
+                              255,
+                            ).withOpacity(0.7),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Center(
+                            child: Text(
+                              snapshot.data ?? 'No greeting found',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: scheme.onBackground,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
                       );
                     }
                   },
                 ),
+
                 const SizedBox(height: 20),
                 if (viewModel.userImageUrl == null)
                   const CircularProgressIndicator(),

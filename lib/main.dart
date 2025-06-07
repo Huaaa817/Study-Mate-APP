@@ -178,6 +178,9 @@ import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
 import 'view_models/todo_list_vm.dart';
 import 'repositories/todo_list_repo.dart';
+import 'view_models/study_vm.dart';
+import 'repositories/study_repo.dart';
+
 import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'view_models/me_wm.dart';
@@ -229,6 +232,8 @@ class App extends StatelessWidget {
               ),
               ChangeNotifierProvider(
                 create: (_) => MoodViewModel(userId!),
+              ),ChangeNotifierProvider(
+                create: (_) => StudyViewModel(StudyRepository(), userId!),
               ),
             ],
             child: MaterialApp.router(
