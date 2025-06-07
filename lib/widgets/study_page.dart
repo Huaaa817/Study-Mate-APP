@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
 import 'package:flutter_app/view_models/study_vm.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_app/view_models/mood_vm.dart';
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -172,6 +173,11 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                   if (_elapsedSeconds > 0) {
                     await vm.uploadStudyDuration(_elapsedSeconds);
                   }
+                  // 先呼叫 updateMood
+                  final moodVM = Provider.of<MoodViewModel>(context, listen: false);
+                  await moodVM.updateMood();
+
+                  // 再導航到 home
                   GoRouter.of(context).go('/home');
                 },
                 style: ElevatedButton.styleFrom(

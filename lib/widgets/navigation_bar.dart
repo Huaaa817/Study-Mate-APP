@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_app/services/navigation.dart';
+import 'package:provider/provider.dart';
+import '/view_models/mood_vm.dart';
 
 enum AppTab { todo, studyset, home, chat, achievement }
 
@@ -27,6 +29,10 @@ class AppBottomNavigationBar extends StatelessWidget {
       currentIndex: currentIndex >= 0 ? currentIndex : 2, // 預設 Home
       onTap: (index) {
         GoRouter.of(context).go('/${tabs[index].name}');
+        if (tabs[index] == AppTab.home) {
+          final moodVM = Provider.of<MoodViewModel>(context, listen: false);
+          moodVM.updateMood();
+        }
       },
       type: BottomNavigationBarType.fixed,
       items: const [
