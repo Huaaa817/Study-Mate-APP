@@ -78,12 +78,15 @@ function buildPrompt(input: {
 }): string {
     const {
         hairColor,
-        skinTone
+        skinTone,
+        hairStyled,
+        hairLength,
+        personality1,
     } = input.imageSetting;
 
     return `
-    You are a Japanese anime illustrator. Create a cheerful anime-style girl in a four-panel (四宮格) sequence. The girl has a ${skinTone} skin tone. Please follow these detailed instructions:
-    
+    You are a Japanese anime illustrator. Create a ${personality1} anime-style girl in a four-panel (四宮格) sequence. She has a ${skinTone} skin tone and wears her hair in a ${hairLength.toLowerCase()}, ${hairStyled.toLowerCase()} style. Follow the detailed instructions below:
+
     Global requirements for all four panels:
     - No borders or frames between the panels.
     - Each panel must be the same size and have equal visual weight.

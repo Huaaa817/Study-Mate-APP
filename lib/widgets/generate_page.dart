@@ -22,16 +22,25 @@ class GeneratePage extends StatefulWidget {
 class _GeneratePageState extends State<GeneratePage> {
   Color hairColor = Colors.brown;
   Color skinColor = Colors.orange.shade100;
-  String hairLength = '長髮';
-  String hairstyle = '捲髮';
-  String personality = '開朗';
+  String hairLength = 'Long Hair';
+  String hairstyle = 'Curly';
+  String personality = 'Cheerful';
 
   Uint8List? _generatedImage;
   bool _isGenerating = false;
 
-  final List<String> hairLengthOptions = ['長髮', '短髮', '中長'];
-  final List<String> hairstyleOptions = ['捲髮', '直髮', '馬尾'];
-  final List<String> personalityOptions = ['開朗', '冷靜', '友善', '有創意'];
+  final List<String> hairLengthOptions = [
+    'Long Hair',
+    'Short Hair',
+    'Medium Length',
+  ];
+  final List<String> hairstyleOptions = ['Curly', 'Straight', 'Ponytail'];
+  final List<String> personalityOptions = [
+    'Cheerful',
+    'Calm',
+    'Friendly',
+    'Creative',
+  ];
 
   final Map<String, Color> namedColors = {
     'black': Color(0xFF000000),
@@ -47,36 +56,16 @@ class _GeneratePageState extends State<GeneratePage> {
     'orange': Color(0xFFFFA500),
 
     // Added skin tones
-    'Very Light Ivory': Color(0xFFFFFBF0),
-    'Extremely Fair': Color(0xFFFFF1DC),
-    'Ivory': Color(0xFFFFEAD3),
-    'Fair Pinkish': Color(0xFFFFE4C9),
-    'Light Skin': Color(0xFFFFDBAC),
-    'Light Peach': Color(0xFFFFE0BD),
-    'Light Golden': Color(0xFFF1C27D),
-    'Medium Skin': Color(0xFFEDC393),
-    'Slightly Yellowish': Color(0xFFE7B98C),
-    'Yellowish Medium': Color(0xFFE0AC69),
-    'Peachy Medium': Color(0xFFD8A06A),
-    'Reddish Medium': Color(0xFFD1A06D),
-    'Medium Dark': Color(0xFFC68E55),
-    'Dark Golden': Color(0xFFB68644),
-    'Peachy Dark': Color(0xFFAD6E3F),
-    'Reddish Brown': Color(0xFF9C5E3C),
-    'Darker Brown': Color(0xFF8D5524),
-    'Dark Reddish Brown': Color(0xFF7D4A1E),
-    'Dark Orange Brown': Color(0xFF6B3F1A),
-    'Dark Brown': Color(0xFF5C4033),
-    'Dark Gray Brown': Color(0xFF523B2E),
-    'Slightly Dark Brown': Color(0xFF4A3623),
-    'Slightly Dark Reddish Brown': Color(0xFF3E2F22),
-    'Almost Black Skin': Color(0xFF3B2F2F),
-    'Very Dark Brown Black': Color(0xFF2E2623),
-    'Dark Gray Black': Color(0xFF241C1A),
-    'Black Brown': Color(0xFF1E1A17),
-    'Very Dark Black': Color(0xFF1B1815),
-    'Deepest Black': Color(0xFF14100D),
-    'Black': Color(0xFF0D0B08),
+    'pale skin': Color(0xFFFFFBF0),
+    'fair skin': Color(0xFFFFEAD3),
+    'light peach skin': Color(0xFFFFDBAC),
+    'golden skin': Color(0xFFF1C27D),
+    'tan skin': Color(0xFFEDC393),
+    'bronzed skin': Color(0xFFAD6E3F), // 👈 新增古銅色
+    'warm brown skin': Color(0xFFB68644),
+    'deep brown skin': Color(0xFF8D5524),
+    'dark skin': Color(0xFF3B2F2F),
+    'ebony skin': Color(0xFF14100D),
   };
 
   String _colorToHex(Color color) {
@@ -117,36 +106,16 @@ class _GeneratePageState extends State<GeneratePage> {
                 pickerColor: currentColor,
                 onColorChanged: onColorChanged,
                 availableColors: const [
-                  Color(0xFFFFFBF0), // 極淺象牙白
-                  Color(0xFFFFF1DC), // 非常白皙
-                  Color(0xFFFFEAD3), // 象牙膚色
-                  Color(0xFFFFE4C9), // 白皙粉膚
-                  Color(0xFFFFDBAC), // 淺膚色
-                  Color(0xFFFFE0BD), // 淺橘膚色
-                  Color(0xFFF1C27D), // 淺金膚色
-                  Color(0xFFEDC393), // 中等膚色
-                  Color(0xFFE7B98C), // 中間偏黃
-                  Color(0xFFE0AC69), // 偏黃中等膚色
-                  Color(0xFFD8A06A), // 偏橘中膚色
-                  Color(0xFFD1A06D), // 偏紅中等膚色
-                  Color(0xFFC68E55), // 中深膚色
-                  Color(0xFFB68644), // 深金膚色
-                  Color(0xFFAD6E3F), // 偏橘深膚
-                  Color(0xFF9C5E3C), // 紅棕膚色
-                  Color(0xFF8D5524), // 更深褐色
-                  Color(0xFF7D4A1E), // 深紅棕
-                  Color(0xFF6B3F1A), // 暗橘棕
-                  Color(0xFF5C4033), // 深棕
-                  Color(0xFF523B2E), // 深灰棕
-                  Color(0xFF4A3623), // 偏暗棕
-                  Color(0xFF3E2F22), // 偏暗紅棕
-                  Color(0xFF3B2F2F), // 幾近黑膚色
-                  Color(0xFF2E2623), // 極深棕黑
-                  Color(0xFF241C1A), // 深灰黑
-                  Color(0xFF1E1A17), // 黑褐
-                  Color(0xFF1B1815), // 極深黑
-                  Color(0xFF14100D), // 最深黑
-                  Color(0xFF0D0B08), // 幾乎純黑
+                  Color(0xFFFFFBF0), // pale skin
+                  Color(0xFFFFEAD3), // fair skin
+                  Color(0xFFFFDBAC), // light peach skin
+                  Color(0xFFF1C27D), // golden skin
+                  Color(0xFFEDC393), // tan skin
+                  Color(0xFFAD6E3F), // bronzed skin
+                  Color(0xFFB68644), // warm brown skin
+                  Color(0xFF8D5524), // deep brown skin
+                  Color(0xFF3B2F2F), // dark skin
+                  Color(0xFF14100D), // ebony skin
                 ],
               ),
             ),
@@ -208,9 +177,9 @@ class _GeneratePageState extends State<GeneratePage> {
         hairstyle,
         'hat',
         _approximateColorName(skinColor),
-        personality,
+        'smileFeling',
         'calm',
-        'friendly',
+        personality,
         'creative',
         'Add sunglasses',
       );
