@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_app/widgets/auth_page.dart';
 import 'package:flutter_app/services/authentication.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_app/view_models/me_wm.dart';
 import 'package:flutter_app/widgets/navigation_scaffold.dart';
 import 'package:flutter_app/widgets/home_page.dart';
 import 'package:flutter_app/widgets/chat_page.dart';
@@ -106,8 +106,26 @@ GoRouter routerConfig(bool isLoggedIn) {
       ),
       GoRoute(
         path: '/generate',
-        pageBuilder:
-            (context, state) => const NoTransitionPage(child: GeneratePage()),
+        pageBuilder: (context, state) {
+          final authService = Provider.of<AuthenticationService>(
+            context,
+            listen: false,
+          );
+
+          return NoTransitionPage(
+            child: StreamBuilder<String?>(
+              stream: authService.userIdStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final userId =
+                    authService.checkAndGetLoggedInUserId() ?? 'guest';
+                return GeneratePage(viewModel: MeViewModel(userId));
+              },
+            ),
+          );
+        },
       ),
     ],
     initialLocation: isLoggedIn ? '/home' : '/auth',
