@@ -58,7 +58,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
 
       final downloadUrl = await ref.getDownloadURL();
 
-      // ✅ 等圖片真的可用
+      // 等圖片真的可用
       final downloadedBytes = await _waitUntilImageAvailable(downloadUrl);
 
       // 儲存 Firestore metadata
@@ -125,7 +125,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('🎁 獎勵配送中，請稍後...'),
+                    Text('獎勵配送中，請稍後...'),
                   ],
                 )
                 : Column(
