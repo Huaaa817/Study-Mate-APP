@@ -176,6 +176,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import '/providers/study_duration_provider.dart';
+import '/providers/background_provider.dart';
 import 'view_models/todo_list_vm.dart';
 import 'repositories/todo_list_repo.dart';
 import 'view_models/study_vm.dart';
@@ -200,6 +201,7 @@ class RootApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
         Provider(create: (_) => AuthenticationService()),
+        ChangeNotifierProvider(create: (_) => BackgroundViewModel()),
       ],
       child: const App(),
     );
