@@ -72,13 +72,13 @@ class MoodRepository {
 
       final lastMsg = snapshot.docs.first;
       final timestamp = lastMsg.data()['timestamp'] as Timestamp?;
-      debugPrint('🕒 最後一則使用者訊息 timestamp: $timestamp');
+      // debugPrint('🕒 最後一則使用者訊息 timestamp: $timestamp');
 
       if (timestamp == null) return false;
 
       final msgDate = timestamp.toDate();
       final now = DateTime.now();
-      debugPrint('📅 訊息時間: $msgDate，現在時間: $now');
+      // debugPrint('📅 訊息時間: $msgDate, 現在時間: $now');
 
       // 判斷是否是今天
       return msgDate.year == now.year &&
@@ -109,4 +109,23 @@ class MoodRepository {
     }
     return 0;
   }
+
+  Future<void> saveDailyMood(String userId, String date, int mood) async {
+    try {
+      await _firestore
+          .collection('apps')
+          .doc('study_mate')
+          .collection('users')
+          .doc(userId)
+          .collection('study_logs')
+          .doc(date)
+          .set({
+            'mood': mood,
+          }, SetOptions(merge: true));
+      debugPrint('✅ 儲存當日 mood 成功：$mood');
+    } catch (e) {
+      debugPrint('❌ 儲存當日 mood 失敗: $e');
+    }
+  }
+
 }

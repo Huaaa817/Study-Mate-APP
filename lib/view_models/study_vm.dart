@@ -22,4 +22,15 @@ class StudyViewModel extends ChangeNotifier {
     _dailyLogs = await _repository.getDailyStudyLog(_userId);
     notifyListeners();
   }
+
+  int seconds = 0;
+  int mood = 0;
+  int feed = 0;
+  Future<void> fetchDataByDate(String date) async {
+    final data = await _repository.fetchLogByDate(_userId, date);
+    seconds = data['seconds'] ?? 0;
+    mood = data['mood'] ?? 0;
+    feed = data['feed'] ?? 0;
+    notifyListeners();
+  }
 }

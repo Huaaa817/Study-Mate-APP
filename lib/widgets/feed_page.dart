@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '/providers/study_duration_provider.dart';
+import 'package:flutter_app/view_models/feed_vm.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
@@ -15,41 +16,82 @@ class _FeedPageState extends State<FeedPage> {
   List<String>? _imagePaths;
   bool _initialized = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // 確保 context 可用後再初始化圖片列表
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final duration = context.read<StudyDurationProvider>().duration;
+
+  //     if (duration >= 35) {
+  //       _imagePaths = [
+  //         'assets/img/meat1.jpg',
+  //         'assets/img/meat2.jpg',
+  //         'assets/img/meat3.jpg',
+  //         'assets/img/meat4.jpg',
+  //       ];
+  //     } else if (duration >= 25) {
+  //       _imagePaths = [
+  //         'assets/img/ice_cream1.jpg',
+  //         'assets/img/ice_cream2.jpg',
+  //         'assets/img/ice_cream3.jpg',
+  //         'assets/img/ice_cream4.jpg',
+  //       ];
+  //     } else {
+  //       _imagePaths = [
+  //         'assets/img/momo1.jpg',
+  //         'assets/img/momo2.jpg',
+  //         'assets/img/momo3.jpg',
+  //         'assets/img/momo4.jpg',
+  //       ];
+  //     }
+
+  //     setState(() {
+  //       _initialized = true;
+  //     });
+  //   });
+  // }
   @override
-  void initState() {
-    super.initState();
-    // 確保 context 可用後再初始化圖片列表
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final duration = context.read<StudyDurationProvider>().duration;
+    void initState() {
+      super.initState();
 
-      if (duration >= 35) {
-        _imagePaths = [
-          'assets/img/meat1.jpg',
-          'assets/img/meat2.jpg',
-          'assets/img/meat3.jpg',
-          'assets/img/meat4.jpg',
-        ];
-      } else if (duration >= 25) {
-        _imagePaths = [
-          'assets/img/ice_cream1.jpg',
-          'assets/img/ice_cream2.jpg',
-          'assets/img/ice_cream3.jpg',
-          'assets/img/ice_cream4.jpg',
-        ];
-      } else {
-        _imagePaths = [
-          'assets/img/momo1.jpg',
-          'assets/img/momo2.jpg',
-          'assets/img/momo3.jpg',
-          'assets/img/momo4.jpg',
-        ];
-      }
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final duration = context.read<StudyDurationProvider>().duration;
 
-      setState(() {
-        _initialized = true;
+        if (duration >= 35) {
+          _imagePaths = [
+            'assets/img/meat1.jpg',
+            'assets/img/meat2.jpg',
+            'assets/img/meat3.jpg',
+            'assets/img/meat4.jpg',
+          ];
+        } else if (duration >= 25) {
+          _imagePaths = [
+            'assets/img/ice_cream1.jpg',
+            'assets/img/ice_cream2.jpg',
+            'assets/img/ice_cream3.jpg',
+            'assets/img/ice_cream4.jpg',
+          ];
+        } else {
+          _imagePaths = [
+            'assets/img/momo1.jpg',
+            'assets/img/momo2.jpg',
+            'assets/img/momo3.jpg',
+            'assets/img/momo4.jpg',
+          ];
+        }
+
+        // 新增計數呼叫
+        await context.read<FeedViewModel>().addFeedCount();
+        debugPrint('add feed count');
+
+        setState(() {
+          _initialized = true;
+        });
       });
-    });
-  }
+    }
+
 
   void _handleButtonPress() {
     if (_imagePaths == null) return;

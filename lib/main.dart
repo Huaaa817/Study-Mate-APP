@@ -186,6 +186,8 @@ import 'services/authentication.dart';
 import 'services/navigation.dart';
 import 'view_models/me_wm.dart';
 import 'view_models/mood_vm.dart';
+import 'view_models/feed_vm.dart';
+import 'repositories/feed_repo.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -245,6 +247,9 @@ class App extends StatelessWidget {
                 create: (_) => MoodViewModel(userId!),
               ),ChangeNotifierProvider(
                 create: (_) => StudyViewModel(StudyRepository(), userId!),
+              ),
+              ChangeNotifierProvider(
+                create: (_) => FeedViewModel(FeedRepository(),userId!), // 可改為 FirebaseAuth.user.uid
               ),
             ],
             child: MaterialApp.router(

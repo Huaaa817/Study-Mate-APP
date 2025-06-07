@@ -26,10 +26,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _greetingFuture = getGreeting();
     _checkDialogShownThenLoadImage();
-    // context.read<MoodViewModel>().loadMood();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MoodViewModel>().loadMood();
-      debugPrint('Calling loadMood...');
+      context.read<MoodViewModel>().updateMood();
+      debugPrint('Calling updateMood...');
     });
   }
 
@@ -94,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
     } else {
-    _showLoadingDialog();
+    //_showLoadingDialog();
     }
   }
 

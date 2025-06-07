@@ -39,4 +39,24 @@ class StudyRepository {
         doc.id: (doc.data()['seconds'] ?? 0) as int,
     };
   }
+
+  Future<Map<String, int>> fetchLogByDate(String userId, String date) async {
+    final doc = await _firestore
+      .collection('apps/study_mate/users')
+      .doc(userId)
+      .collection('study_logs')
+      .doc(date)
+      .get();
+
+    if (!doc.exists) return {};
+
+    final data = doc.data()!;
+    return {
+      'seconds': data['seconds'] as int? ?? 0,
+      'mood': data['mood'] as int? ?? 0,
+      'feed': data['feed'] as int? ?? 0,
+    };
+  }
+
+
 }

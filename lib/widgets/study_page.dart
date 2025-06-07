@@ -172,8 +172,8 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                     await vm.uploadStudyDuration(_elapsedSeconds);
                   }
                   // 先呼叫 updateMood
-                  final moodVM = Provider.of<MoodViewModel>(context, listen: false);
-                  await moodVM.updateMood();
+                  // final moodVM = Provider.of<MoodViewModel>(context, listen: false);
+                  // await moodVM.updateMood();
 
                   // 再導航到 home
                   GoRouter.of(context).go('/home');
