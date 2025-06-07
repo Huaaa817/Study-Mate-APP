@@ -25,13 +25,15 @@ GoRouter routerConfig(bool isLoggedIn) {
       ),
       GoRoute(
         path: '/home',
-        pageBuilder:
-            (context, state) => NoTransitionPage(
-              child: NavigationScaffold(
-                currentPath: state.uri.path,
-                child: const HomePage(),
-              ),
+        pageBuilder: (context, state) {
+          final meViewModel = Provider.of<MeViewModel>(context, listen: false);
+          return NoTransitionPage(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: HomePage(viewModel: meViewModel), // ✅ 傳入必要參數
             ),
+          );
+        },
       ),
       GoRoute(
         path: '/todo',

@@ -76,10 +76,16 @@ function buildPrompt(input: {
     imageSetting: z.infer<typeof studyMateSchema>;
     otherDescription: string;
 }): string {
-    const { hairColor } = input.imageSetting;
+    const {
+        hairColor,
+        skinTone,
+        hairStyled,
+        hairLength,
+        personality1,
+    } = input.imageSetting;
 
     return `
-    You are a Japanese anime illustrator. Create a four-panel (四宮格) sequence featuring a cheerful anime-style girl. Follow these detailed instructions:
+    You are a Japanese anime illustrator. Create a ${personality1} anime-style girl in a four-panel (四宮格) sequence. She has a ${skinTone} skin tone and wears her hair in a ${hairLength.toLowerCase()}, ${hairStyled.toLowerCase()} style. Follow the detailed instructions below:
 
     Global requirements for all four panels:
     - No borders or frames between the panels.
@@ -92,6 +98,7 @@ function buildPrompt(input: {
     Panel 1 (top-left):
     - The girl is sitting and reading a book.
     - She wears a school uniform and has long ${hairColor} hair.
+    - She has a ${skinTone} skin tone.
     - The mood is calm and focused.
 
 
@@ -99,16 +106,19 @@ function buildPrompt(input: {
     Panel 2 (top-right):
     - A new action begins (not related to panel 1).
     - The girl is now dancing in a medium-long shot.
+    - She has a ${skinTone} skin tone.
     - Medium-long shot, same framing and position.
 
     Panel 3 (bottom-left):
     - Continue the dance motion from panel 2.
     - The girl raises her right hand beside her face and waves in a medium-long shot.
+    - She has a ${skinTone} skin tone.
     - Her fingers are spread in a lively greeting.
 
     Panel 4 (bottom-right):
     - Continue smoothly from panel 3.
     - The girl is dancing in a final dynamic pose in a medium-long shot.
+    - She has a ${skinTone} skin tone.
     - Same style and consistent framing.
 
     Remember: all four panels must follow the global requirements above.

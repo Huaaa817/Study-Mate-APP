@@ -22,30 +22,50 @@ class GeneratePage extends StatefulWidget {
 class _GeneratePageState extends State<GeneratePage> {
   Color hairColor = Colors.brown;
   Color skinColor = Colors.orange.shade100;
-  String hairLength = '長髮';
-  String hairstyle = '捲髮';
-  String personality = '開朗';
+  String hairLength = 'Long Hair';
+  String hairstyle = 'Curly';
+  String personality = 'Cheerful';
 
   Uint8List? _generatedImage;
   bool _isGenerating = false;
 
-  final List<String> hairLengthOptions = ['長髮', '短髮', '中長'];
-  final List<String> hairstyleOptions = ['捲髮', '直髮', '馬尾'];
-  final List<String> personalityOptions = ['開朗', '冷靜', '友善', '有創意'];
+  final List<String> hairLengthOptions = [
+    'Long Hair',
+    'Short Hair',
+    'Medium Length',
+  ];
+  final List<String> hairstyleOptions = ['Curly', 'Straight', 'Ponytail'];
+  final List<String> personalityOptions = [
+    'Cheerful',
+    'Calm',
+    'Friendly',
+    'Creative',
+  ];
 
   final Map<String, Color> namedColors = {
-    '黑色': Color(0xFF000000),
-    '白色': Color(0xFFFFFFFF),
-    '紅色': Color(0xFFFF0000),
+    'black': Color(0xFF000000),
+    'white': Color(0xFFFFFFFF),
+    'red': Color(0xFFFF0000),
     'green': Color(0xFF00FF00),
-    '藍色': Color(0xFF0000FF),
-    '黃色': Color(0xFFFFFF00),
-    '青色': Color(0xFF00FFFF),
-    '洋紅色': Color(0xFFFF00FF),
-    '灰色': Color(0xFF808080),
-    '棕色': Color(0xFFA52A2A),
-    '橙色': Color(0xFFFFA500),
-    '淺橘膚色': Colors.orange.shade100,
+    'blue': Color(0xFF0000FF),
+    'yellow': Color(0xFFFFFF00),
+    'Cyan': Color(0xFF00FFFF),
+    'Magenta': Color(0xFFFF00FF),
+    'gray': Color(0xFF808080),
+    'brown': Color(0xFFA52A2A),
+    'orange': Color(0xFFFFA500),
+
+    // Added skin tones
+    'pale skin': Color(0xFFFFFBF0),
+    'fair skin': Color(0xFFFFEAD3),
+    'light peach skin': Color(0xFFFFDBAC),
+    'golden skin': Color(0xFFF1C27D),
+    'tan skin': Color(0xFFEDC393),
+    'bronzed skin': Color(0xFFAD6E3F), // 👈 新增古銅色
+    'warm brown skin': Color(0xFFB68644),
+    'deep brown skin': Color(0xFF8D5524),
+    'dark skin': Color(0xFF3B2F2F),
+    'ebony skin': Color(0xFF14100D),
   };
 
   String _colorToHex(Color color) {
@@ -72,6 +92,40 @@ class _GeneratePageState extends State<GeneratePage> {
       pow(a.red - b.red, 2) +
           pow(a.green - b.green, 2) +
           pow(a.blue - b.blue, 2),
+    );
+  }
+
+  void _pickColor_ton(Color currentColor, ValueChanged<Color> onColorChanged) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('選擇膚色'),
+            content: SingleChildScrollView(
+              child: BlockPicker(
+                pickerColor: currentColor,
+                onColorChanged: onColorChanged,
+                availableColors: const [
+                  Color(0xFFFFFBF0), // pale skin
+                  Color(0xFFFFEAD3), // fair skin
+                  Color(0xFFFFDBAC), // light peach skin
+                  Color(0xFFF1C27D), // golden skin
+                  Color(0xFFEDC393), // tan skin
+                  Color(0xFFAD6E3F), // bronzed skin
+                  Color(0xFFB68644), // warm brown skin
+                  Color(0xFF8D5524), // deep brown skin
+                  Color(0xFF3B2F2F), // dark skin
+                  Color(0xFF14100D), // ebony skin
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text('完成'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
     );
   }
 
@@ -123,9 +177,9 @@ class _GeneratePageState extends State<GeneratePage> {
         hairstyle,
         'hat',
         _approximateColorName(skinColor),
-        personality,
+        'smileFeling',
         'calm',
-        'friendly',
+        personality,
         'creative',
         'Add sunglasses',
       );
@@ -291,7 +345,7 @@ class _GeneratePageState extends State<GeneratePage> {
               ),
               trailing: CircleAvatar(backgroundColor: skinColor),
               onTap:
-                  () => _pickColor(
+                  () => _pickColor_ton(
                     skinColor,
                     (color) => setState(() => skinColor = color),
                   ),
