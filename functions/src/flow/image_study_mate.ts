@@ -63,7 +63,6 @@
 //     }
 // );
 
-
 import { z } from "zod";
 import { Buffer } from "buffer";
 import { ai } from "../config";
@@ -77,70 +76,88 @@ function buildPrompt(input: {
     imageSetting: z.infer<typeof studyMateSchema>;
     otherDescription: string;
 }): string {
-    const {
-        //hairLength,
-        hairColor,
-        // hairStyled,
-        // decoration,
-        // skinTone,
-        // smileFeelings,
-        // eyeFeeling,
-        // personality1,
-        // personality2,
-    } = input.imageSetting;
+    const { hairColor } = input.imageSetting;
 
-    //     return `You are a Japanese animation illustrator. Create a medium-long shot portrait of an anime-style girl.
-    // Her hairstyle is ${hairLength}, ${hairColor}, and ${hairStyled}. She is wearing ${decoration}.
-    // Her skin tone is ${skinTone}. She has a ${smileFeelings} smile and ${eyeFeeling} eyes.
-    // Her personality is ${personality1} and ${personality2}.
-    // ${input.otherDescription}`;
-    return `You are a Japanese animation illustrator. Create a four-panel sequence (四宮格) of a cheerful anime-style girl with consistent head position in each frame. She is dancing (打招呼) in medium-long shot, wearing a uniform, with long ${hairColor} hair. Each panel should depict a different stage of the greeting movement to form a smooth animation.`;
-    //     
+    return `
+    You are a Japanese anime illustrator. Create a four-panel (四宮格) sequence featuring a cheerful anime-style girl. Follow these detailed instructions:
+
+    Global requirements for all four panels:
+    - No borders or frames between the panels.
+    - Each panel must be the same size and have equal visual weight.
+    - The girl should always face forward (frontal face).
+    - Each panel is a medium-long shot.
+    - The girl's body stays centered in every frame.
+    - Keep head position and framing consistent.
+
+    Panel 1 (top-left):
+    - The girl is sitting and reading a book.
+    - She wears a school uniform and has long ${hairColor} hair.
+    - The mood is calm and focused.
+
+
+    panel 2, 3, 4 should depict a different stage of the dancing movement to form a smooth animation
+    Panel 2 (top-right):
+    - A new action begins (not related to panel 1).
+    - The girl is now dancing in a medium-long shot.
+    - Medium-long shot, same framing and position.
+
+    Panel 3 (bottom-left):
+    - Continue the dance motion from panel 2.
+    - The girl raises her right hand beside her face and waves in a medium-long shot.
+    - Her fingers are spread in a lively greeting.
+
+    Panel 4 (bottom-right):
+    - Continue smoothly from panel 3.
+    - The girl is dancing in a final dynamic pose in a medium-long shot.
+    - Same style and consistent framing.
+
+    Remember: all four panels must follow the global requirements above.
+    `;
+    // return `You are a Japanese animation illustrator. Create a four-panel sequence (四宮格) of a cheerful anime-style girl with consistent head position in each frame. She is dancing (打招呼) in medium-long shot, wearing a uniform, with long ${hairColor} hair. Each panel should depict a different stage of the greeting movement to form a smooth animation.`
+    //     ;
 }
 
 /**
- * 定義 AI Prompt，傳入 messages 是一個 resolver function
+ * 定義 AI Prompt
  */
 const imageGenerator = ai.definePrompt({
     model: imagen3,
-    name: 'imageGenerator',
+    name: "imageGenerator",
     messages: (input) => [
         {
-            role: 'user',
-            content: [
-                {
-                    text: buildPrompt(input)
-                }
-            ]
-        }
+            role: "user",
+            content: [{ text: buildPrompt(input) }],
+        },
     ],
     input: {
         schema: z.object({
             imageSetting: studyMateSchema,
-            otherDescription: z.string()
-        })
-    }
+            otherDescription: z.string(),
+        }),
+    },
 });
 
 /**
- * Flow 註冊，會由 onCallGenkit 呼叫
+ * Flow 主體：呼叫 image model 並轉為 base64 字串，Dev UI 顯示圖片
  */
-export const studyMateImageFlow = ai.defineFlow({
-    name: 'studyMateImageFlow',
-    inputSchema: z.object({
-        imageSetting: studyMateSchema,
-        otherDescription: z.string()
-    }),
-    outputSchema: z.object({
-        imageBase64: z.string()
-    })
-},
+export const studyMateImageFlow = ai.defineFlow(
+    {
+        name: "studyMateImageFlow",
+        inputSchema: z.object({
+            imageSetting: studyMateSchema,
+            otherDescription: z.string(),
+        }),
+        outputSchema: z.object({
+            imageBase64: z.string(),
+            imageBase64Preview: z.string().optional(), // Dev UI 用來預覽圖片
+        }),
+    },
     async (input) => {
         let response;
         try {
             response = await imageGenerator({
                 imageSetting: input.imageSetting,
-                otherDescription: input.otherDescription
+                otherDescription: input.otherDescription,
             });
         } catch (error: any) {
             const errorMessage = error?.message || "";
@@ -148,7 +165,7 @@ export const studyMateImageFlow = ai.defineFlow({
                 console.warn("Retrying due to content filter...");
                 response = await imageGenerator({
                     imageSetting: input.imageSetting,
-                    otherDescription: input.otherDescription
+                    otherDescription: input.otherDescription,
                 });
             } else {
                 throw error;
@@ -158,13 +175,13 @@ export const studyMateImageFlow = ai.defineFlow({
         const imageUrl = response?.media?.url;
         if (!imageUrl) throw new Error("No image URL returned");
 
-        // 下載圖片並轉為 base64 傳回前端
         const imageResp = await fetch(imageUrl);
         const buffer = Buffer.from(await imageResp.arrayBuffer());
         const base64String = buffer.toString("base64");
 
         return {
             imageBase64: base64String,
+            imageBase64Preview: imageUrl, // Dev UI 預覽用
         };
     }
 );
