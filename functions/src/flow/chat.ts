@@ -12,7 +12,7 @@ const greetingGenerator = ai.definePrompt({
     model: gemini15Flash,
     name: "greetingGenerator",
     messages: `
-你是一位女生，性格是「{{personality}}」。請用這種語氣對很好的男性朋友說一句自然又超過 15 字的打招呼語，不要叫他的名字。
+你是一位女生，性格是「{{personality}}」。請用這種語氣對很好的男性朋友說一句自然又超過 10 字的打招呼語，不要叫他的名字。
 {{todoReminder}}
 不要解釋，不要講太多背景，直接說話。`,
     input: {
