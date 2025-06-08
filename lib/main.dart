@@ -170,13 +170,254 @@
 //     );
 //   }
 // }
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:firebase_core/firebase_core.dart';
+
+// import 'firebase_options.dart';
+// import '/providers/study_duration_provider.dart';
+// import '/providers/background_provider.dart';
+// import 'view_models/todo_list_vm.dart';
+// import 'repositories/todo_list_repo.dart';
+// import 'view_models/study_vm.dart';
+// import 'repositories/study_repo.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'services/authentication.dart';
+// import 'services/navigation.dart';
+// import 'view_models/me_wm.dart';
+// import 'view_models/mood_vm.dart';
+// import 'view_models/feed_vm.dart';
+// import 'repositories/feed_repo.dart';
+// //import 'package:flutter_app/services/push_messaging.dart';
+
+// final theme = ThemeData(
+//   useMaterial3: true,
+//   colorScheme: const ColorScheme(
+//     brightness: Brightness.light,
+//     primary: Color(0xFFC1526E), // 主要按鈕、圖示
+//     onPrimary: Colors.white, // 主要按鈕內文字
+//     primaryContainer: Color.fromARGB(255, 243, 189, 200), // 按鈕背景（例如圓形圖按鈕）
+//     onPrimaryContainer: Colors.black, // 按鈕背景文字
+
+//     secondary: Color(0xFFE68A9E), // 次要元件（例如邊框）
+//     onSecondary: Colors.white,
+//     secondaryContainer: Color(0xFFFFE4EC),
+//     onSecondaryContainer: Colors.black,
+
+//     background: Color(0xFFFFF5F8), // scaffold 背景
+//     onBackground: Colors.black,
+
+//     surface: Colors.white, // 卡片或面板
+//     onSurface: Colors.black,
+
+//     error: Colors.red,
+//     onError: Colors.white,
+//   ),
+//   textTheme: GoogleFonts.latoTextTheme(),
+// );
+
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//   runApp(const RootApp());
+// }
+
+// class RootApp extends StatelessWidget {
+//   const RootApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
+//         Provider(create: (_) => AuthenticationService()),
+//         ChangeNotifierProvider(create: (_) => BackgroundViewModel()),
+//       ],
+//       child: const App(),
+//     );
+//   }
+// }
+
+// class App extends StatelessWidget {
+//   const App({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final authService = Provider.of<AuthenticationService>(
+//       context,
+//       listen: false,
+//     );
+
+//     return StreamBuilder<String?>(
+//       stream: authService.userIdStream(),
+//       builder: (context, snapshot) {
+//         final userId = snapshot.data;
+//         final isLoggedIn = userId != null;
+
+//         if (isLoggedIn) {
+//           return MultiProvider(
+//             providers: [
+//               ChangeNotifierProvider(create: (_) => MeViewModel(userId!)),
+//               ChangeNotifierProvider(
+//                 create: (_) => TodoListViewModel(TodoListRepository(), userId!),
+//               ),
+//               ChangeNotifierProvider(
+//                 create: (_) => MoodViewModel(userId!),
+//               ),ChangeNotifierProvider(
+//                 create: (_) => StudyViewModel(StudyRepository(), userId!),
+//               ),
+//               ChangeNotifierProvider(
+//                 create: (_) => FeedViewModel(FeedRepository(),userId!), // 可改為 FirebaseAuth.user.uid
+//               ),
+//               // Provider<PushMessagingService>(
+//               //   create: (_) => PushMessagingService(),
+//               // ),
+//             ],
+//             child: MaterialApp.router(
+//               restorationScopeId: 'app',
+//               theme: theme,
+//               routerConfig: routerConfig(true),
+//             ),
+//           );
+//         } else {
+//           return MaterialApp.router(
+//             restorationScopeId: 'app',
+//             theme: theme,
+//             routerConfig: routerConfig(false),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
+
+
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart'; // Firebase 設定檔
+
+// import 'providers/study_duration_provider.dart';
+// import 'providers/background_provider.dart';
+// import 'view_models/todo_list_vm.dart';
+// import 'repositories/todo_list_repo.dart';
+// import 'view_models/study_vm.dart';
+// import 'repositories/study_repo.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'services/authentication.dart';
+// import 'services/navigation.dart';
+// import 'view_models/me_wm.dart';
+// import 'view_models/mood_vm.dart';
+// import 'view_models/feed_vm.dart';
+// import 'repositories/feed_repo.dart';
+// import 'services/push_messaging.dart'; // 引入推播通知服務
+
+// final theme = ThemeData(
+//   useMaterial3: true,
+//   colorScheme: const ColorScheme(
+//     brightness: Brightness.light,
+//     primary: Color(0xFFC1526E),
+//     onPrimary: Colors.white,
+//     primaryContainer: Color.fromARGB(255, 243, 189, 200),
+//     onPrimaryContainer: Colors.black,
+//     secondary: Color(0xFFE68A9E),
+//     onSecondary: Colors.white,
+//     secondaryContainer: Color(0xFFFFE4EC),
+//     onSecondaryContainer: Colors.black,
+//     background: Color(0xFFFFF5F8),
+//     onBackground: Colors.black,
+//     surface: Colors.white,
+//     onSurface: Colors.black,
+//     error: Colors.red,
+//     onError: Colors.white,
+//   ),
+//   textTheme: GoogleFonts.latoTextTheme(),
+// );
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+//   // 初始化推播服務
+//   await PushMessagingService().initialize();
+
+//   runApp(const RootApp());
+// }
+
+// class RootApp extends StatelessWidget {
+//   const RootApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider(create: (_) => StudyDurationProvider()),
+//         Provider(create: (_) => AuthenticationService()),
+//         ChangeNotifierProvider(create: (_) => BackgroundViewModel()),
+//       ],
+//       child: const App(),
+//     );
+//   }
+// }
+
+// class App extends StatelessWidget {
+//   const App({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final authService = Provider.of<AuthenticationService>(
+//       context,
+//       listen: false,
+//     );
+
+//     return StreamBuilder<String?>( 
+//       stream: authService.userIdStream(),
+//       builder: (context, snapshot) {
+//         final userId = snapshot.data;
+//         final isLoggedIn = userId != null;
+
+//         if (isLoggedIn) {
+//           return MultiProvider(
+//             providers: [
+//               ChangeNotifierProvider(create: (_) => MeViewModel(userId!)),
+//               ChangeNotifierProvider(
+//                 create: (_) => TodoListViewModel(TodoListRepository(), userId!),
+//               ),
+//               ChangeNotifierProvider(
+//                 create: (_) => MoodViewModel(userId!),
+//               ),
+//               ChangeNotifierProvider(
+//                 create: (_) => StudyViewModel(StudyRepository(), userId!),
+//               ),
+//               ChangeNotifierProvider(
+//                 create: (_) => FeedViewModel(FeedRepository(), userId!),
+//               ),
+//             ],
+//             child: MaterialApp.router(
+//               restorationScopeId: 'app',
+//               theme: theme,
+//               routerConfig: routerConfig(true),
+//             ),
+//           );
+//         } else {
+//           return MaterialApp.router(
+//             restorationScopeId: 'app',
+//             theme: theme,
+//             routerConfig: routerConfig(false),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart'; // Firebase 設定檔
 
-import 'firebase_options.dart';
-import '/providers/study_duration_provider.dart';
-import '/providers/background_provider.dart';
+import 'providers/study_duration_provider.dart';
+import 'providers/background_provider.dart';
 import 'view_models/todo_list_vm.dart';
 import 'repositories/todo_list_repo.dart';
 import 'view_models/study_vm.dart';
@@ -188,38 +429,34 @@ import 'view_models/me_wm.dart';
 import 'view_models/mood_vm.dart';
 import 'view_models/feed_vm.dart';
 import 'repositories/feed_repo.dart';
-//import 'package:flutter_app/services/push_messaging.dart';
+import 'services/push_messaging.dart'; // 引入推播通知服務
 
 final theme = ThemeData(
   useMaterial3: true,
   colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    primary: Color(0xFFC1526E), // 主要按鈕、圖示
-    onPrimary: Colors.white, // 主要按鈕內文字
-    primaryContainer: Color.fromARGB(255, 243, 189, 200), // 按鈕背景（例如圓形圖按鈕）
-    onPrimaryContainer: Colors.black, // 按鈕背景文字
-
-    secondary: Color(0xFFE68A9E), // 次要元件（例如邊框）
+    primary: Color(0xFFC1526E),
+    onPrimary: Colors.white,
+    primaryContainer: Color.fromARGB(255, 243, 189, 200),
+    onPrimaryContainer: Colors.black,
+    secondary: Color(0xFFE68A9E),
     onSecondary: Colors.white,
     secondaryContainer: Color(0xFFFFE4EC),
     onSecondaryContainer: Colors.black,
-
-    background: Color(0xFFFFF5F8), // scaffold 背景
+    background: Color(0xFFFFF5F8),
     onBackground: Colors.black,
-
-    surface: Colors.white, // 卡片或面板
+    surface: Colors.white,
     onSurface: Colors.black,
-
     error: Colors.red,
     onError: Colors.white,
   ),
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const RootApp());
 }
 
@@ -256,6 +493,12 @@ class App extends StatelessWidget {
         final isLoggedIn = userId != null;
 
         if (isLoggedIn) {
+          // 在用戶登入後初始化推播服務
+          final List<String> topics = ['topic1', 'topic2']; // 這是你想要訂閱的主題，根據需求修改
+          Future.delayed(Duration.zero, () async {
+            await PushMessagingService().initialize(userId: userId!, topics: topics);
+          });
+
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) => MeViewModel(userId!)),
@@ -264,27 +507,25 @@ class App extends StatelessWidget {
               ),
               ChangeNotifierProvider(
                 create: (_) => MoodViewModel(userId!),
-              ),ChangeNotifierProvider(
+              ),
+              ChangeNotifierProvider(
                 create: (_) => StudyViewModel(StudyRepository(), userId!),
               ),
               ChangeNotifierProvider(
-                create: (_) => FeedViewModel(FeedRepository(),userId!), // 可改為 FirebaseAuth.user.uid
+                create: (_) => FeedViewModel(FeedRepository(), userId!),
               ),
-              // Provider<PushMessagingService>(
-              //   create: (_) => PushMessagingService(),
-              // ),
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',
               theme: theme,
-              routerConfig: routerConfig(true),
+              routerConfig: routerConfig(true),  // 如果已登入，則使用 routerConfig(true)
             ),
           );
         } else {
           return MaterialApp.router(
             restorationScopeId: 'app',
             theme: theme,
-            routerConfig: routerConfig(false),
+            routerConfig: routerConfig(false),  // 如果未登入，則使用 routerConfig(false)
           );
         }
       },
