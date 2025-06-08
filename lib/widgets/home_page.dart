@@ -17,9 +17,13 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<String>? _greetingFuture;
   bool _hasShownImageDialog = false;
+
+  late AnimationController _heartController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
 
   @override
   void initState() {
@@ -30,6 +34,18 @@ class _HomePageState extends State<HomePage> {
       context.read<MoodViewModel>().updateMood();
       debugPrint('Calling updateMood...');
     });
+    _heartController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true); // 自動來回動畫
+
+    _scaleAnimation = Tween(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+    );
+
+    _opacityAnimation = Tween(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+    );
   }
 
   Future<String> getGreeting() async {
@@ -99,6 +115,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void dispose() {
+    _heartController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final viewModel = context.watch<MeViewModel>();
@@ -127,13 +149,13 @@ class _HomePageState extends State<HomePage> {
           ),
 
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.20,
+            top: MediaQuery.of(context).size.height * 0.13,
             left: 0,
             right: 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // ❤️ 心情條 + 愛心 疊在一起
+                // ❤️ 心情條 + 愛心
                 Consumer<MoodViewModel>(
                   builder: (context, moodVM, _) {
                     final filledCount = moodVM.mood.clamp(0, 5); // 限制 0~5
@@ -154,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.center,
                             clipBehavior: Clip.none,
                             children: [
-                              // ✅ 條狀格（含漸層 + 圓角）
+                              //  條狀格（含漸層 + 圓角）
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child:
@@ -206,12 +228,18 @@ class _HomePageState extends State<HomePage> {
                               ),
 
                               if (isLastFilled)
-                                const Positioned(
-                                  top: -20, // 讓它上下置中蓋住條狀條
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 24,
+                                Positioned(
+                                  top: -29,
+                                  child: FadeTransition(
+                                    opacity: _opacityAnimation,
+                                    child: ScaleTransition(
+                                      scale: _scaleAnimation,
+                                      child: const Icon(
+                                        Icons.favorite,
+                                        color: Color.fromARGB(255, 220, 76, 81),
+                                        size: 24,
+                                      ),
+                                    ),
                                   ),
                                 ),
                             ],

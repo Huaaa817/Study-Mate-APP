@@ -54,11 +54,11 @@ class TodoTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue),
+              icon: Icon(Icons.edit, color: scheme.onPrimaryContainer),
               onPressed: onEdit,
             ),
             IconButton(
-              icon: Icon(Icons.delete, color: scheme.error),
+              icon: Icon(Icons.delete, color: scheme.onPrimaryContainer),
               onPressed: onDelete,
             ),
           ],

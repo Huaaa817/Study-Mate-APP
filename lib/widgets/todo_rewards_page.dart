@@ -11,7 +11,6 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_app/widgets/circle_image_button.dart';
 
-
 class TodoRewardsPage extends StatefulWidget {
   const TodoRewardsPage({super.key});
 
@@ -27,11 +26,11 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
     "A quiet university courtyard in the early morning...",
     "A cozy rooftop under a starry night sky...",
     "A riverside path beneath blooming cherry blossom trees...",
-    "An indoor Japanese-style study room with tatami flooring...",
+    "A sunlit Japanese-style study room with tatami flooring, filled with soft morning light...",
     "A peaceful grassy field under soft golden sunlight...",
   ];
 
-  // 🌀 新增動畫 frame 設定
+  // 動畫 frame 設定
   final List<String> _gifFrames = [
     'assets/img/gift1.png',
     'assets/img/gift2.png',
@@ -116,7 +115,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
       final imageWidget = Image.memory(downloadedBytes, fit: BoxFit.cover);
 
       if (mounted) {
-        _gifTimer?.cancel(); // 🛑 停止動畫
+        _gifTimer?.cancel(); // 停止動畫
         setState(() {
           _imageWidget = imageWidget;
           _loading = false;
@@ -125,7 +124,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
     } catch (e) {
       print('❌ Failed to generate image: $e');
       if (mounted) {
-        _gifTimer?.cancel(); // 🛑 停止動畫
+        _gifTimer?.cancel(); // 停止動畫
         setState(() {
           _imageWidget = const Icon(Icons.error, size: 80, color: Colors.red);
           _loading = false;
@@ -158,7 +157,11 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('獎勵領取')),
+      appBar: AppBar(
+        title: const Text('Rewards'),
+        backgroundColor: scheme.primary, // buildColorTile('primary')
+        foregroundColor: scheme.onPrimary, // buildColorTile('onPrimary')
+      ),
       body: Center(
         child:
             _loading

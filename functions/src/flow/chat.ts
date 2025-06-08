@@ -13,6 +13,7 @@ const greetingGenerator = ai.definePrompt({
     name: "greetingGenerator",
     messages: `
 你是一位女生，性格是「{{personality}}」。請用這種語氣對很好的男性朋友說一句自然又超過 10 字的打招呼語，不要叫他的名字。
+請只用繁體中文回答，不要使用其他語言。
 {{todoReminder}}
 不要解釋，不要講太多背景，直接說話。`,
     input: {
@@ -28,14 +29,14 @@ export const greetingFlow = ai.defineFlow(
     {
         name: "greetingFlow",
         inputSchema: z.object({
-            userId: z.string(), // ✅ 只需傳入 userId
+            userId: z.string(), //  只需傳入 userId
         }),
     },
     async (input) => {
         try {
             const { userId } = input;
 
-            // ✅ 讀取使用者 personality 文件（固定為 profile）
+            //  讀取使用者 personality 文件（固定為 profile）
             const profileDoc = await db
                 .collection("apps")
                 .doc("study_mate")
@@ -50,11 +51,11 @@ export const greetingFlow = ai.defineFlow(
                     ? profileDoc.data()!.type
                     : "可愛";
 
-            // ✅ 查詢今天的 todos（以台灣 UTC+8 時區切割）
+            // 查詢今天的 todos（以台灣 UTC+8 時區切割）
             const now = new Date();
 
             // 取得當前系統與 UTC 的時間差（台灣為 -480 分鐘）
-            const offset = -now.getTimezoneOffset(); // 例如 -480
+            const offset = -480; // 例如 -480
 
             // 偏移後的本地時間（轉為台灣時區）
             const localTime = new Date(now.getTime() + offset * 60 * 1000);
@@ -78,7 +79,10 @@ export const greetingFlow = ai.defineFlow(
                 .where("dueDate", "<", tomorrow)
                 .get();
 
-            const todos = todosSnapshot.docs.map((doc) => doc.data());
+            const todos = todosSnapshot.docs
+                .map((doc) => doc.data())
+                .filter((todo) => todo.isDone === false);
+
             const count = todos.length;
 
             let reminder = "";
@@ -86,7 +90,7 @@ export const greetingFlow = ai.defineFlow(
                 reminder = `並創意地告訴他，他今天有 ${count} 項代辦事項，一起開始！不需告訴他具體有哪些事項`;
             }
 
-            // ✅ 呼叫 Gemini 生成 greeting
+            // 呼叫 Gemini 生成 greeting
             const response = await greetingGenerator({
                 personality,
                 todoReminder: reminder,
