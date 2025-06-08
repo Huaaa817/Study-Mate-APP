@@ -188,6 +188,7 @@ import 'view_models/me_wm.dart';
 import 'view_models/mood_vm.dart';
 import 'view_models/feed_vm.dart';
 import 'repositories/feed_repo.dart';
+//import 'package:flutter_app/services/push_messaging.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -269,6 +270,9 @@ class App extends StatelessWidget {
               ChangeNotifierProvider(
                 create: (_) => FeedViewModel(FeedRepository(),userId!), // 可改為 FirebaseAuth.user.uid
               ),
+              // Provider<PushMessagingService>(
+              //   create: (_) => PushMessagingService(),
+              // ),
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',

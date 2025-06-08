@@ -16,7 +16,7 @@ class ChatPage extends StatelessWidget {
         return vm;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('聊天頁面')),
+        appBar: AppBar(title: const Text('Chat')),
         body: const ChatViewBody(),
       ),
     );

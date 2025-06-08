@@ -96,6 +96,8 @@ class _AchievementPageState extends State<AchievementPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Achievement'),
+        backgroundColor: Theme.of(context).colorScheme.primary, // buildColorTile('primary')
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
