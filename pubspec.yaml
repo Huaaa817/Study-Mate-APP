@@ -102,6 +102,8 @@ flutter:
      - assets/processed_image.png
      - assets/pretty_studymate.png
      - assets/ugly_studymate.png
+     - assets/studymate_dif.png
+     - assets/studymate_strange.png
      - assets/img/home_bg.jpg
      - assets/chat.png
      - assets/logo_google.svg
@@ -114,6 +116,9 @@ flutter:
      - assets/img/dialog_box.png
      - assets/rewards_gift.png
      - assets/focus.png
-
+     - assets/img/key1.png
+     - assets/img/key2.png
+     - assets/img/key3.png
+     - assets/img/key4.png
 
 

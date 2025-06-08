@@ -14,13 +14,13 @@ import 'package:flutter_app/widgets/todo_rewards_page.dart';
 import 'package:flutter_app/widgets/achievement_page.dart';
 import 'package:flutter_app/widgets/feed_page.dart';
 import 'package:flutter_app/widgets/generate_page.dart';
+
 GoRouter routerConfig(bool isLoggedIn) {
   return GoRouter(
     routes: [
       GoRoute(
         path: '/auth',
-        pageBuilder:
-            (context, state) => const MaterialPage(child: AuthPage()),
+        pageBuilder: (context, state) => const MaterialPage(child: AuthPage()),
       ),
       GoRoute(
         path: '/home',
@@ -36,30 +36,33 @@ GoRouter routerConfig(bool isLoggedIn) {
       ),
       GoRoute(
         path: '/todo',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const TodoPage(),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => MaterialPage(
+              child: NavigationScaffold(
+                currentPath: state.uri.path,
+                child: const TodoPage(),
+              ),
+            ),
       ),
       GoRoute(
         path: '/todo_rewards',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const TodoRewardsPage(),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => MaterialPage(
+              child: NavigationScaffold(
+                currentPath: state.uri.path,
+                child: const TodoRewardsPage(),
+              ),
+            ),
       ),
       GoRoute(
         path: '/studyset',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const StudySetPage(),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => MaterialPage(
+              child: NavigationScaffold(
+                currentPath: state.uri.path,
+                child: const StudySetPage(),
+              ),
+            ),
       ),
       GoRoute(
         path: '/study',
@@ -67,30 +70,36 @@ GoRouter routerConfig(bool isLoggedIn) {
       ),
       GoRoute(
         path: '/feed',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const FeedPage(),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => MaterialPage(
+              child: NavigationScaffold(
+                currentPath: state.uri.path,
+                child: const FeedPage(),
+              ),
+            ),
       ),
       GoRoute(
         path: '/chat',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const ChatPage(),
-          ),
-        ),
+        pageBuilder: (context, state) {
+          final meViewModel = Provider.of<MeViewModel>(context, listen: false);
+          return MaterialPage(
+            child: NavigationScaffold(
+              currentPath: state.uri.path,
+              child: ChatPage(meViewModel: meViewModel), // 傳入必需的參數
+            ),
+          );
+        },
       ),
+
       GoRoute(
         path: '/achievement',
-        pageBuilder: (context, state) => MaterialPage(
-          child: NavigationScaffold(
-            currentPath: state.uri.path,
-            child: const AchievementPage(),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => MaterialPage(
+              child: NavigationScaffold(
+                currentPath: state.uri.path,
+                child: const AchievementPage(),
+              ),
+            ),
       ),
       GoRoute(
         path: '/generate',

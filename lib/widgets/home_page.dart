@@ -17,9 +17,13 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Future<String>? _greetingFuture;
   bool _hasShownImageDialog = false;
+
+  late AnimationController _heartController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
 
   @override
   void initState() {
@@ -30,6 +34,18 @@ class _HomePageState extends State<HomePage> {
       context.read<MoodViewModel>().updateMood();
       debugPrint('Calling updateMood...');
     });
+    _heartController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true); // 自動來回動畫
+
+    _scaleAnimation = Tween(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+    );
+
+    _opacityAnimation = Tween(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+    );
   }
 
   Future<String> getGreeting() async {
@@ -79,8 +95,8 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder:
               (_) => AlertDialog(
-                title: const Text('No Image Found'),
-                content: const Text('Go to generate'),
+                title: const Text('Generate Studymate'),
+                content: const Text('你還沒擁有Studymate，一起來創造吧'),
                 actions: [
                   TextButton(
                     child: const Text('OK'),
@@ -96,6 +112,12 @@ class _HomePageState extends State<HomePage> {
     } else {
       //_showLoadingDialog();
     }
+  }
+
+  @override
+  void dispose() {
+    _heartController.dispose();
+    super.dispose();
   }
 
   @override
@@ -127,13 +149,13 @@ class _HomePageState extends State<HomePage> {
           ),
 
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.20,
+            top: MediaQuery.of(context).size.height * 0.13,
             left: 0,
             right: 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // ❤️ 心情條 + 愛心 疊在一起
+                // ❤️ 心情條 + 愛心
                 Consumer<MoodViewModel>(
                   builder: (context, moodVM, _) {
                     final filledCount = moodVM.mood.clamp(0, 5); // 限制 0~5
@@ -154,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                             alignment: Alignment.center,
                             clipBehavior: Clip.none,
                             children: [
-                              // ✅ 條狀格（含漸層 + 圓角）
+                              //  條狀格（含漸層 + 圓角）
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child:
@@ -206,12 +228,18 @@ class _HomePageState extends State<HomePage> {
                               ),
 
                               if (isLastFilled)
-                                const Positioned(
-                                  top: -20, // 讓它上下置中蓋住條狀條
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 24,
+                                Positioned(
+                                  top: -29,
+                                  child: FadeTransition(
+                                    opacity: _opacityAnimation,
+                                    child: ScaleTransition(
+                                      scale: _scaleAnimation,
+                                      child: const Icon(
+                                        Icons.favorite,
+                                        color: Color.fromARGB(255, 220, 76, 81),
+                                        size: 24,
+                                      ),
+                                    ),
                                   ),
                                 ),
                             ],
@@ -236,46 +264,51 @@ class _HomePageState extends State<HomePage> {
                       );
                     } else {
                       return Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // 加上透明度的圖片
-                            Opacity(
-                              opacity: 0.85, // 0.0 = 完全透明，1.0 = 不透明
-                              child: Image.asset(
-                                'assets/img/dialog_box.png',
-                                fit: BoxFit.contain,
-                                width: 360,
-                              ),
-                            ),
-                            // 文字內容
-                            SizedBox(
-                              width: 300,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 16.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 對話框背景圖片（可自動變高）
+                              Opacity(
+                                opacity: 0.85,
+                                child: Image.asset(
+                                  'assets/img/dialog_box.png',
+                                  width: 360,
+                                  fit: BoxFit.fill,
                                 ),
-                                child: Text(
-                                  snapshot.data ?? 'No greeting found',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: scheme.onBackground,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.4,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
+                              ),
+                              // 文字部分
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 320,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0,
+                                    vertical: 24.0,
+                                  ),
+                                  child: Text(
+                                    snapshot.data ?? 'No greeting found',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: scheme.onBackground,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.black26,
+                                          offset: Offset(1, 1),
+                                          blurRadius: 2,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }
