@@ -116,6 +116,9 @@ flutter:
      - assets/img/dialog_box.png
      - assets/rewards_gift.png
      - assets/focus.png
-
+     - assets/img/key1.png
+     - assets/img/key2.png
+     - assets/img/key3.png
+     - assets/img/key4.png
 
 

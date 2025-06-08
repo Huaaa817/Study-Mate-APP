@@ -264,46 +264,51 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       );
                     } else {
                       return Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // 加上透明度的圖片
-                            Opacity(
-                              opacity: 0.85, // 0.0 = 完全透明，1.0 = 不透明
-                              child: Image.asset(
-                                'assets/img/dialog_box.png',
-                                fit: BoxFit.contain,
-                                width: 360,
-                              ),
-                            ),
-                            // 文字內容
-                            SizedBox(
-                              width: 300,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                  vertical: 16.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 對話框背景圖片（可自動變高）
+                              Opacity(
+                                opacity: 0.85,
+                                child: Image.asset(
+                                  'assets/img/dialog_box.png',
+                                  width: 360,
+                                  fit: BoxFit.fill,
                                 ),
-                                child: Text(
-                                  snapshot.data ?? 'No greeting found',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: scheme.onBackground,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    height: 1.4,
-                                    shadows: [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        offset: Offset(1, 1),
-                                        blurRadius: 2,
-                                      ),
-                                    ],
+                              ),
+                              // 文字部分
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 320,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0,
+                                    vertical: 24.0,
+                                  ),
+                                  child: Text(
+                                    snapshot.data ?? 'No greeting found',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: scheme.onBackground,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.4,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.black26,
+                                          offset: Offset(1, 1),
+                                          blurRadius: 2,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
                     }
