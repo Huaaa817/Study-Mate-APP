@@ -304,7 +304,7 @@ class _GeneratePageState extends State<GeneratePage> {
         'POST',
         Uri.parse('https://api.remove.bg/v1.0/removebg'),
       );
-      request.headers['X-Api-Key'] = 'YOUR_API_KEY'; // 替換成你的 API Key
+      request.headers['X-Api-Key'] = 'pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',
