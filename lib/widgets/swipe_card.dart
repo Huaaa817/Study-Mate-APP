@@ -28,6 +28,16 @@ class _SwipeCardState extends State<SwipeCard> {
       'likeType': 'like',
       'describe': '讚',
     },
+    {
+      'image': 'assets/studymate_dif.png',
+      'likeType': 'dislike',
+      'describe': '確保膚色一致',
+    },
+    {
+      'image': 'assets/studymate_strange.png',
+      'likeType': 'dislike',
+      'describe': '確保身體比例一致',
+    },
   ];
 
   void onSwipe(double dx) {
