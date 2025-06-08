@@ -1,72 +1,6 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:flutter_app/view_models/study_vm.dart';
-
-// class AchievementPage extends StatelessWidget {
-//   const AchievementPage({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final studyVM = Provider.of<StudyViewModel>(context, listen: false);
-
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Achievement')),
-//       body: FutureBuilder<Map<String, int>>(
-//         future: studyVM.fetchDailyLogs().then((_) {
-//           final logs = studyVM.dailyLogs;
-//           //print('✅ [DEBUG] 取得 dailyLogs 共 ${logs.length} 筆：');
-//           for (var entry in logs.entries) {
-//             print('📅 ${entry.key} => ${entry.value} 秒');
-//           }
-//           return logs;
-//         }),
-//         builder: (context, snapshot) {
-//           print('⏳ [DEBUG] Snapshot 狀態：${snapshot.connectionState}');
-
-//           if (snapshot.connectionState != ConnectionState.done) {
-//             return const Center(child: CircularProgressIndicator());
-//           }
-
-//           if (snapshot.hasError) {
-//             print('❌ [DEBUG] Snapshot 發生錯誤：${snapshot.error}');
-//             return Center(child: Text('發生錯誤：${snapshot.error}'));
-//           }
-
-//           final logs = snapshot.data ?? {};
-
-//           if (logs.isEmpty) {
-//             print('⚠️ [DEBUG] snapshot.data 為空，顯示尚無紀錄');
-//             return const Center(child: Text('目前尚無讀書紀錄'));
-//           }
-
-//           //print('✅ [DEBUG] 開始渲染 ${logs.length} 筆紀錄');
-//           return ListView(
-//             padding: const EdgeInsets.all(16),
-//             children:
-//                 logs.entries.map((entry) {
-//                   final date = entry.key;
-//                   final totalSeconds = entry.value;
-//                   final hours = totalSeconds ~/ 3600;
-//                   final minutes = (totalSeconds % 3600) ~/ 60;
-//                   final seconds = totalSeconds % 60;
-
-//                   final formattedTime = '${hours} 小時 ${minutes} 分 ${seconds} 秒';
-
-//                   return ListTile(
-//                     title: Text('📅 $date'),
-//                     subtitle: Text('🕒 今日累積：$formattedTime'),
-//                   );
-//                 }).toList(),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_app/view_models/study_vm.dart';
 
 class AchievementPage extends StatefulWidget {
@@ -79,16 +13,24 @@ class AchievementPage extends StatefulWidget {
 class _AchievementPageState extends State<AchievementPage> {
   DateTime _selectedDate = DateTime.now();
 
+  // 取得當週周一日期（方便繪製週圖表）
+  DateTime get _startOfWeek {
+    final weekday = _selectedDate.weekday; // 1=Mon, 7=Sun
+    return _selectedDate.subtract(Duration(days: weekday - 1));
+  }
+
   @override
   void initState() {
     super.initState();
     _loadDataForDate(_selectedDate);
+    context.read<StudyViewModel>().fetchWeeklyLogs();
   }
 
   void _loadDataForDate(DateTime date) {
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
     final studyVM = context.read<StudyViewModel>();
     studyVM.fetchDataByDate(formattedDate);
+    studyVM.fetchWeeklyLogs();
   }
 
   Future<void> _pickDate() async {
@@ -107,6 +49,24 @@ class _AchievementPageState extends State<AchievementPage> {
     }
   }
 
+  // 左箭頭：往前一天
+  void _previousDay() {
+    setState(() {
+      _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+    });
+    _loadDataForDate(_selectedDate);
+  }
+
+  // 右箭頭：往後一天
+  void _nextDay() {
+    if (_selectedDate.isBefore(DateTime.now())) {
+      setState(() {
+        _selectedDate = _selectedDate.add(const Duration(days: 1));
+      });
+      _loadDataForDate(_selectedDate);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final studyVM = context.watch<StudyViewModel>();
@@ -115,6 +75,24 @@ class _AchievementPageState extends State<AchievementPage> {
     final minutes = (studyVM.seconds % 3600) ~/ 60;
     final seconds = studyVM.seconds % 60;
 
+    final theme = Theme.of(context);
+
+    // 取得本週每天的讀書秒數資料
+    // 假設 studyVM 有方法：fetchWeeklyData(DateTime startOfWeek) 回傳 Map<String, int> (key=yyyy-MM-dd)
+    // 為簡化示範，這裡直接從 dailyLogs 撈資料
+    final Map<String, int> weeklyData = {};
+    for (int i = 0; i < 7; i++) {
+      final day = _startOfWeek.add(Duration(days: i));
+      final key = DateFormat('yyyy-MM-dd').format(day);
+      weeklyData[key] = studyVM.weeklyLogs[key] ?? 0;
+    }
+
+    // 週日文字縮寫
+    const weekDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+    // 心情值最大分成 5 格
+    final moodValue = studyVM.mood.clamp(0, 5);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Achievement'),
@@ -122,253 +100,183 @@ class _AchievementPageState extends State<AchievementPage> {
           IconButton(
             icon: const Icon(Icons.calendar_today),
             onPressed: _pickDate,
+            tooltip: '選擇日期',
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '日期：${DateFormat('yyyy-MM-dd').format(_selectedDate)}',
-              style: const TextStyle(fontSize: 18),
+            // 日期選擇區塊：左箭頭 日期 右箭頭
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_left, color: theme.primaryColor),
+                  onPressed: _previousDay,
+                  tooltip: '前一天',
+                ),
+                GestureDetector(
+                  onTap: _pickDate,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: theme.primaryColor),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      DateFormat('yyyy-MM-dd').format(_selectedDate),
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(color: theme.primaryColor),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.arrow_right, color: theme.primaryColor),
+                  onPressed: _nextDay,
+                  tooltip: '後一天',
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text('累積讀書時間：$hours 小時 $minutes 分 $seconds 秒'),
-            const SizedBox(height: 8),
-            Text('心情值：${studyVM.mood}'),
-            const SizedBox(height: 8),
-            Text('餵食次數：${studyVM.feed}'),
+            const SizedBox(height: 24),
+
+            // // 一整週柱狀圖
+            SizedBox(
+              height: 180,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(7, (index) {
+                  final day = _startOfWeek.add(Duration(days: index));
+                  final key = DateFormat('yyyy-MM-dd').format(day);
+                  final seconds = weeklyData[key] ?? 0;
+
+                  // 柱狀圖最大高度（像素）
+                  const maxBarHeight = 120.0;
+
+                  // 計算最高秒數，避免除以 0
+                  final maxSeconds =
+                      weeklyData.values.isNotEmpty ? weeklyData.values.reduce((a, b) => a > b ? a : b) : 1;
+
+                  // 計算柱狀高度
+                  final barHeight =
+                      maxSeconds == 0 ? 4.0 : (seconds / maxSeconds) * maxBarHeight;
+
+                  // 判斷是否為選取日期
+                  final isSelected = key == DateFormat('yyyy-MM-dd').format(_selectedDate);
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // 顯示累積小時（1小時以下顯示分鐘）
+                      if (seconds > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            seconds >= 3600
+                                ? '${(seconds / 3600).toStringAsFixed(1)}h'
+                                : '${(seconds / 60).toStringAsFixed(1)}m',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isSelected
+                                  ? theme.primaryColorDark
+                                  : theme.disabledColor,
+                            ),
+                          ),
+                        ),
+                      // 柱狀圖
+                      Container(
+                        width: 20.0,
+                        height: barHeight < 4.0 ? 4.0 : barHeight,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? theme.primaryColor
+                              : theme.primaryColorLight,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // 星期縮寫
+                      Text(
+                        weekDayLabels[index],
+                        style: TextStyle(
+                          color: isSelected
+                              ? theme.primaryColorDark
+                              : theme.disabledColor,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // 累積時間與心情條
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12.0), // 👈 稍微往右一點
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '累積讀書時間',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '$hours 小時 $minutes 分 $seconds 秒',
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                    const SizedBox(height: 24),
+
+                    Text(
+                      '心情值',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List.generate(5, (index) {
+                        final isFilled = index < moodValue;
+                        return Container(
+                          margin: EdgeInsets.only(right: index == 4 ? 0 : 6),
+                          width: 36.0,
+                          height: 16.0,
+                          decoration: BoxDecoration(
+                            color: isFilled
+                                ? theme.primaryColor
+                                : theme.primaryColorLight.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        );
+                      }),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Text(
+                      '餵食次數',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${studyVM.feed}',
+                      style: theme.textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-// import 'dart:ui';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:intl/intl.dart';
-// import 'package:fl_chart/fl_chart.dart';
-// import 'package:flutter_app/view_models/study_vm.dart';
-
-// class AchievementPage extends StatefulWidget {
-//   const AchievementPage({super.key});
-
-//   @override
-//   State<AchievementPage> createState() => _AchievementPageState();
-// }
-
-// class _AchievementPageState extends State<AchievementPage>
-//     with SingleTickerProviderStateMixin {
-//   late Future<Map<String, int>> _dailyLogsFuture;
-//   late AnimationController _heartController;
-//   late Animation<double> _heartAnimation;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     final studyVM = context.read<StudyViewModel>();
-//     _dailyLogsFuture = studyVM.fetchDailyLogs().then((_) => studyVM.dailyLogs);
-
-//     _heartController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 600),
-//     )..repeat(reverse: true);
-
-//     _heartAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
-//       CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
-//     );
-//   }
-
-//   @override
-//   void dispose() {
-//     _heartController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final studyVM = context.watch<StudyViewModel>();
-//     final days = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
-//     final now = DateTime.now();
-
-//     return Scaffold(
-//       extendBodyBehindAppBar: true,
-//       appBar: AppBar(
-//         title: const Text('Achievement'),
-//         backgroundColor: Colors.transparent,
-//         elevation: 0,
-//       ),
-//       body: Stack(
-//         children: [
-//           // 背景圖
-//           Container(
-//             decoration: const BoxDecoration(
-//               image: DecorationImage(
-//                 image: AssetImage('assets/img/corridor.jpg'),
-//                 fit: BoxFit.cover,
-//               ),
-//             ),
-//           ),
-//           // 玻璃模糊與內容
-//           BackdropFilter(
-//             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-//             child: Container(
-//               color: Colors.white.withOpacity(0.1),
-//               padding: const EdgeInsets.symmetric(horizontal: 16),
-//               child: FutureBuilder<Map<String, int>>(
-//                 future: _dailyLogsFuture,
-//                 builder: (context, snapshot) {
-//                   if (!snapshot.hasData) {
-//                     return const Center(child: CircularProgressIndicator());
-//                   }
-
-//                   final data = snapshot.data!;
-//                   final List<BarChartGroupData> barGroups = [];
-
-//                   for (int i = 0; i < 7; i++) {
-//                     final day = now.subtract(Duration(days: 6 - i));
-//                     final key = DateFormat('yyyy-MM-dd').format(day);
-//                     final seconds = data[key] ?? 0;
-//                     final hours = seconds / 3600;
-
-//                     barGroups.add(BarChartGroupData(
-//                       x: i,
-//                       barRods: [
-//                         BarChartRodData(
-//                           toY: hours,
-//                           color: Colors.redAccent,
-//                           width: 18,
-//                           borderRadius: BorderRadius.circular(4),
-//                         ),
-//                       ],
-//                     ));
-//                   }
-
-//                   return ListView(
-//                     children: [
-//                       const SizedBox(height: 80),
-//                       _buildCard(
-//                         child: Column(
-//                           children: [
-//                             const Text('Total Hours',
-//                                 style: TextStyle(fontSize: 18)),
-//                             SizedBox(
-//                               height: 200,
-//                               child: BarChart(
-//                                 BarChartData(
-//                                   titlesData: FlTitlesData(
-//                                     leftTitles: AxisTitles(
-//                                       sideTitles: SideTitles(showTitles: true),
-//                                     ),
-//                                     bottomTitles: AxisTitles(
-//                                       sideTitles: SideTitles(
-//                                         showTitles: true,
-//                                         getTitlesWidget: (value, _) {
-//                                           final index = value.toInt();
-//                                           return Text(
-//                                             days[index],
-//                                             style:
-//                                                 const TextStyle(fontSize: 12),
-//                                           );
-//                                         },
-//                                       ),
-//                                     ),
-//                                   ),
-//                                   borderData: FlBorderData(show: false),
-//                                   barGroups: barGroups,
-//                                   gridData: FlGridData(show: false),
-//                                   maxY: 10,
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                       const SizedBox(height: 12),
-//                       _buildCard(
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             const Text('Achievement',
-//                                 style: TextStyle(fontSize: 18)),
-//                             const SizedBox(height: 8),
-//                             Text('🍽️ Feeding frequency : ${studyVM.feed}'),
-//                           ],
-//                         ),
-//                       ),
-//                       const SizedBox(height: 12),
-//                       _buildCard(
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             const Text('Mood',
-//                                 style: TextStyle(fontSize: 18)),
-//                             const SizedBox(height: 8),
-//                             Row(
-//                               children: [
-//                                 ScaleTransition(
-//                                   scale: _heartAnimation,
-//                                   child: const Icon(Icons.favorite,
-//                                       color: Colors.pinkAccent, size: 24),
-//                                 ),
-//                                 const SizedBox(width: 8),
-//                                 Expanded(
-//                                   child: LinearProgressIndicator(
-//                                     value: studyVM.mood / 5,
-//                                     backgroundColor: Colors.grey.shade300,
-//                                     color: Colors.pinkAccent,
-//                                   ),
-//                                 ),
-//                                 const SizedBox(width: 8),
-//                                 Text('${studyVM.mood}'),
-//                               ],
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                       const SizedBox(height: 16),
-//                       Center(
-//                         child: ElevatedButton(
-//                           onPressed: () {},
-//                           style: ElevatedButton.styleFrom(
-//                             backgroundColor: Colors.brown[700],
-//                             shape: RoundedRectangleBorder(
-//                               borderRadius: BorderRadius.circular(30),
-//                             ),
-//                           ),
-//                           child: const Padding(
-//                             padding: EdgeInsets.symmetric(
-//                                 horizontal: 24, vertical: 12),
-//                             child: Text('Confirm'),
-//                           ),
-//                         ),
-//                       ),
-//                       const SizedBox(height: 50),
-//                     ],
-//                   );
-//                 },
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildCard({required Widget child}) {
-//     return Container(
-//       margin: const EdgeInsets.symmetric(vertical: 6),
-//       padding: const EdgeInsets.all(16),
-//       decoration: BoxDecoration(
-//         color: Colors.white.withOpacity(0.2),
-//         borderRadius: BorderRadius.circular(20),
-//       ),
-//       child: child,
-//     );
-//   }
-// }
-

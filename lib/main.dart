@@ -195,7 +195,7 @@ final theme = ThemeData(
     brightness: Brightness.light,
     primary: Color(0xFFC1526E), // 主要按鈕、圖示
     onPrimary: Colors.white, // 主要按鈕內文字
-    primaryContainer: Color(0xFFFFD9E1), // 按鈕背景（例如圓形圖按鈕）
+    primaryContainer: Color.fromARGB(255, 243, 189, 200), // 按鈕背景（例如圓形圖按鈕）
     onPrimaryContainer: Colors.black, // 按鈕背景文字
 
     secondary: Color(0xFFE68A9E), // 次要元件（例如邊框）

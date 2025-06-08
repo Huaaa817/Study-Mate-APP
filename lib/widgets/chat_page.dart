@@ -113,9 +113,19 @@ class _ChatViewBodyState extends State<ChatViewBody> {
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
+                          // padding: const EdgeInsets.all(12.0),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.white,
+                          //   borderRadius: BorderRadius.circular(16.0),
+                          //   boxShadow: const [
+                          //     BoxShadow(color: Colors.black26, blurRadius: 5),
+                          //   ],
+                          // ),
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isUser
+                                ? Colors.white // 使用預設顏色
+                                : Theme.of(context).colorScheme.primaryContainer, // AI 訊息使用 secondary 顏色
                             borderRadius: BorderRadius.circular(16.0),
                             boxShadow: const [
                               BoxShadow(color: Colors.black26, blurRadius: 5),
@@ -169,6 +179,7 @@ class _ChatViewBodyState extends State<ChatViewBody> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.send),
+                      color: vm.isLoading ? Colors.grey : Theme.of(context).colorScheme.secondary,
                       onPressed: vm.isLoading ? null : () => _sendMessage(vm),
                     ),
                   ],
