@@ -29,18 +29,63 @@ class _GeneratePageState extends State<GeneratePage> {
 
   Uint8List? _generatedImage;
   bool _isGenerating = false;
+  final ScrollController _scrollController = ScrollController();
+  Color appBarColor = Colors.transparent;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    print("Scroll offset: ${_scrollController.offset}");
+    final newColor =
+        _scrollController.offset > 10
+            ? Theme.of(context).colorScheme.primary
+            : Colors.transparent;
+
+    if (newColor != appBarColor) {
+      setState(() {
+        appBarColor = newColor;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   final List<String> hairLengthOptions = [
     'Long Hair',
     'Short Hair',
     'Medium Length',
   ];
-  final List<String> hairstyleOptions = ['Curly', 'Straight', 'Ponytail'];
+  final List<String> hairstyleOptions = [
+    'Curly',
+    'Straight',
+    'Ponytail',
+    'Braided',
+    'Twin Tails',
+    'Bob Cut',
+    'Long Wavy',
+    'Bun',
+    'Side Sweep',
+    'Messy',
+  ];
   final List<String> personalityOptions = [
     'Cheerful',
-    'Calm',
-    'Friendly',
-    'Creative',
+    'Shy',
+    'Tsundere',
+    'Mysterious',
+    'Clumsy',
+    'Elegant',
+    'Rebellious',
+    'Gentle',
+    'Mischievous',
+    'Romantic',
   ];
   final Map<String, Color> namedColors_hair = {
     'black': Color(0xFF000000),
@@ -370,53 +415,44 @@ class _GeneratePageState extends State<GeneratePage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
+    print("background color:");
+    print(appBarColor);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('生成形象'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.secondaryContainer,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 3,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: IconButton(
-                onPressed: _runFlow,
-                iconSize: 40, // 比原本小一點
-                padding: EdgeInsets.zero,
-                icon: ClipOval(
-                  child: Image.asset(
-                    'assets/generate.png',
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        backgroundColor: appBarColor,
+        centerTitle: true,
+        title: const Text('generate your studymate'),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const SwipeCard(),
-            // ✅ 已刪除舊的圓形按鈕區塊
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 32,
+                  ),
+                ),
+                Expanded(child: const SwipeCard()),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                ),
+              ],
+            ),
+
             ListTile(
               title: const Text('髮色'),
               subtitle: Text(
@@ -450,26 +486,61 @@ class _GeneratePageState extends State<GeneratePage> {
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
             ),
-
-            // 其他下拉選單與設定選項保持不變
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: '髮型'),
               value: hairstyle,
+              onChanged: (val) => setState(() => hairstyle = val!),
               items:
                   hairstyleOptions
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
-              onChanged: (val) => setState(() => hairstyle = val!),
             ),
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: '個性'),
               value: personality,
+              onChanged: (val) => setState(() => personality = val!),
               items:
                   personalityOptions
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
-              onChanged: (val) => setState(() => personality = val!),
             ),
+
+            const SizedBox(height: 24),
+
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 3,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  onPressed: _runFlow,
+                  iconSize: 40,
+                  padding: EdgeInsets.zero,
+                  icon: ClipOval(
+                    child: Image.asset(
+                      'assets/generate.png',
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),

@@ -12,29 +12,37 @@ class _SwipeCardState extends State<SwipeCard> {
   double dragX = 0;
   bool showHeart = false;
 
-  final List<String> images = [
-    'assets/img/meat1.jpg',
-    'assets/img/meat2.jpg',
-    'assets/img/meat3.jpg',
+  final List<Map<String, dynamic>> cards = [
+    {
+      'image': 'assets/pretty_studymate.png',
+      'likeType': 'like',
+      'describe': '讚',
+    },
+    {
+      'image': 'assets/ugly_studymate.png',
+      'likeType': 'dislike',
+      'describe': '膚色不正常',
+    },
+    {
+      'image': 'assets/processed_image.png',
+      'likeType': 'like',
+      'describe': '讚',
+    },
   ];
 
   void onSwipe(double dx) {
     setState(() {
-      // 只累積負的dx（左滑）
       if (dx < 0) {
         dragX += dx;
-        // 你要顯示什麼圖示也可以改這裡，我這裡範例改成左滑超過100顯示心形
         showHeart = dragX < -100;
       }
-      // 往右滑不做事
     });
   }
 
   void onEndSwipe() {
     setState(() {
-      // 左滑超過 -100 就換下一張
       if (dragX < -100) {
-        currentIndex = (currentIndex + 1) % images.length;
+        currentIndex = (currentIndex + 1) % cards.length;
       }
       dragX = 0;
       showHeart = false;
@@ -45,6 +53,9 @@ class _SwipeCardState extends State<SwipeCard> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final rotationAngle = dragX / screenWidth * 0.2;
+
+    final currentCard = cards[currentIndex];
+    final likeType = currentCard['likeType'];
 
     return Center(
       child: GestureDetector(
@@ -65,18 +76,54 @@ class _SwipeCardState extends State<SwipeCard> {
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
                   children: [
-                    Image.asset(images[currentIndex], fit: BoxFit.cover),
-                    // 如果要顯示心形，可在這裡加一個條件顯示的 Positioned Icon
-                    if (showHeart)
-                      Positioned(
-                        top: 20,
-                        left: 20,
-                        child: Icon(
-                          Icons.favorite,
-                          color: Colors.redAccent,
-                          size: 48,
+                    Image.asset(currentCard['image'], fit: BoxFit.cover),
+
+                    // 喜歡 / 不喜歡的 Icon（不含文字）
+                    Positioned(
+                      top: 20,
+                      right: 20,
+                      child: Icon(
+                        likeType == 'like' ? Icons.thumb_up : Icons.thumb_down,
+                        color: likeType == 'like' ? Colors.green : Colors.red,
+                        size: 32,
+                        shadows: [
+                          const Shadow(
+                            blurRadius: 3,
+                            color: Colors.black45,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 說明文字（靠底部、可換行）
+                    // 說明文字（靠底部、可換行，自動隨文字長度調整寬度）
+                    Positioned(
+                      bottom: 12,
+                      left: 16, // 靠左邊一點
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        constraints: const BoxConstraints(
+                          maxWidth: 250,
+                        ), // 防止太長超出卡片
+                        child: Text(
+                          currentCard['describe'] ?? '',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.left,
+                          softWrap: true,
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),

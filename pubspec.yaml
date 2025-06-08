@@ -100,6 +100,8 @@ flutter:
      - assets/img/meat4.jpg
      - assets/img/corridor.jpg
      - assets/processed_image.png
+     - assets/pretty_studymate.png
+     - assets/ugly_studymate.png
      - assets/img/home_bg.jpg
      - assets/chat.png
      - assets/logo_google.svg

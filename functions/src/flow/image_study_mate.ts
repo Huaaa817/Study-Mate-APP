@@ -94,6 +94,7 @@ function buildPrompt(input: {
     - Each panel is a medium-long shot.
     - The girl's body stays centered in every frame.
     - Keep head position and framing consistent.
+    - The girl must align with the bottom edge of each panel, so she is drawn starting from the bottom of the panel upwards.
 
     Panel 1 (top-left):
     - The girl is sitting and reading a book.
@@ -102,7 +103,7 @@ function buildPrompt(input: {
     - The mood is calm and focused.
 
 
-    panel 2, 3, 4 should depict a different stage of the dancing movement to form a smooth animation
+    panel 2, 3, 4 should depict a different stage of the dancing movement to form a smooth animation, and ensure Each panel is a medium-long shot.
     Panel 2 (top-right):
     - A new action begins (not related to panel 1).
     - The girl is now dancing in a medium-long shot.
