@@ -102,7 +102,11 @@ class _StudySetPageState extends State<StudySetPage> {
         '${selectedMinute.toString().padLeft(2, '0')} 分 ${selectedSecond.toString().padLeft(2, '0')} 秒';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Study setting')),
+      appBar: AppBar(
+        title: const Text('Study setting'),
+        backgroundColor: Theme.of(context).colorScheme.primary, // buildColorTile('primary')
+        foregroundColor: Theme.of(context).colorScheme.onPrimary
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+//import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
@@ -34,8 +35,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
       _durationInterval =
           int.tryParse(
             GoRouterState.of(context).uri.queryParameters['duration'] ?? '60',
-          ) ??
-          60;
+          ) ?? 60;
 
       _startTimer();
 
@@ -65,9 +65,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
         _timer?.cancel();
         _timer = null;
 
-        GoRouter.of(context).push('/feed?duration=$_durationInterval').then((
-          _,
-        ) {
+        GoRouter.of(context).push('/feed?duration=$_durationInterval').then((_) {
           if (mounted) _startTimer();
         });
       }
@@ -78,11 +76,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
-    Provider.of<StudyViewModel>(
-      context,
-      listen: false,
-    ).uploadStudyDuration(_elapsedSeconds);
-
+    Provider.of<StudyViewModel>(context, listen: false).uploadStudyDuration(_elapsedSeconds);
     super.dispose();
   }
 
@@ -105,7 +99,7 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
         children: [
           if (bgVM.backgroundWidget != null) bgVM.backgroundWidget!,
 
-          // 將圖片放底部中央，顯示左上角四分之一並放大兩倍
+          // 顯示圖片，保持原位置
           if (userImageUrl != null && userImageUrl.isNotEmpty)
             Positioned(
               bottom: 0,
@@ -134,84 +128,102 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
           else
             const Center(child: CircularProgressIndicator()),
 
+          // 調整圓形背景大小與位置，並與倒數時間往上調整
           Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '累積專注時間：${_formatTime(_elapsedSeconds)}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: scheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
+            top: MediaQuery.of(context).size.height * 0.1, // 圓形位置更往上
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Transform.translate(
+                offset: const Offset(0, -60), // 整體圓形及時間文字稍微往上移
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // 調整圓形背景大小
+                    Container(
+                      width: 350,  // 圓形變小
+                      height: 350,  // 圓形變小
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.25),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.2),
+                            blurRadius: 20,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 顯示倒數時間
+                    Text(
+                      _formatTime(_elapsedSeconds),
+                      style: TextStyle(
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 專注時間文字顯示
+                    Positioned(
+                      top: 70,
+                      child: Text(
+                        '專注時間',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white.withOpacity(0.95),
+                          letterSpacing: 1.2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: Offset(1, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
 
+          // 調整「結束專注」按鈕位置
           Positioned(
-            bottom: 40,
+            top: MediaQuery.of(context).size.height * 0.48,  // 使用 top 並將其設為畫面高度的 55% 來調整位置
             left: 0,
             right: 0,
             child: Center(
-              // child: ElevatedButton(
-              //   onPressed: () async {
-              //     final vm = Provider.of<StudyViewModel>(
-              //       context,
-              //       listen: false,
-              //     );
-
-              //     if (_elapsedSeconds > 0) {
-              //       await vm.uploadStudyDuration(_elapsedSeconds);
-              //     }
-              //     // 先呼叫 updateMood
-              //     // final moodVM = Provider.of<MoodViewModel>(context, listen: false);
-              //     // await moodVM.updateMood();
-
-              //     // 再導航到 home
-              //     GoRouter.of(context).go('/home');
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: scheme.primary,
-              //     foregroundColor: scheme.onPrimary,
-              //     padding: const EdgeInsets.symmetric(
-              //       horizontal: 24,
-              //       vertical: 12,
-              //     ),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(20),
-              //     ),
-              //   ),
-              //   child: const Text('結束專注', style: TextStyle(fontSize: 16)),
-              // ),
               child: RoundedRectButton(
                 text: '結束專注',
                 onPressed: () async {
-                  final vm = Provider.of<StudyViewModel>(
-                    context,
-                    listen: false,
-                  );
-
+                  //if (!mounted) return; // 確保頁面仍然存在
+                   debugPrint('Button pressed!');
+                  final vm = Provider.of<StudyViewModel>(context, listen: false);
                   if (_elapsedSeconds > 0) {
                     await vm.uploadStudyDuration(_elapsedSeconds);
                   }
-
+                   debugPrint('Button!!!');
                   GoRouter.of(context).go('/home');
                 },
                 horizontalPadding: 24,
                 verticalPadding: 12,
                 textStyle: const TextStyle(fontSize: 16),
               ),
-
             ),
           ),
+
         ],
       ),
     );

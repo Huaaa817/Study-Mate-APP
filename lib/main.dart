@@ -188,6 +188,7 @@ import 'view_models/me_wm.dart';
 import 'view_models/mood_vm.dart';
 import 'view_models/feed_vm.dart';
 import 'repositories/feed_repo.dart';
+//import 'package:flutter_app/services/push_messaging.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
@@ -195,7 +196,7 @@ final theme = ThemeData(
     brightness: Brightness.light,
     primary: Color(0xFFC1526E), // 主要按鈕、圖示
     onPrimary: Colors.white, // 主要按鈕內文字
-    primaryContainer: Color(0xFFFFD9E1), // 按鈕背景（例如圓形圖按鈕）
+    primaryContainer: Color.fromARGB(255, 243, 189, 200), // 按鈕背景（例如圓形圖按鈕）
     onPrimaryContainer: Colors.black, // 按鈕背景文字
 
     secondary: Color(0xFFE68A9E), // 次要元件（例如邊框）
@@ -269,6 +270,9 @@ class App extends StatelessWidget {
               ChangeNotifierProvider(
                 create: (_) => FeedViewModel(FeedRepository(),userId!), // 可改為 FirebaseAuth.user.uid
               ),
+              // Provider<PushMessagingService>(
+              //   create: (_) => PushMessagingService(),
+              // ),
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',

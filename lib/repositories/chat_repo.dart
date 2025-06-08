@@ -11,9 +11,27 @@ class ChatRepository {
     final userId = currentUserId;
     if (userId == null) throw Exception("User not logged in");
 
-    final doc = await _firestore.collection('users').doc(userId).get();
-    return doc.data()?['personality'] ?? '可愛';
+    try {
+      final doc = await _firestore
+          .collection('apps')
+          .doc('study_mate')
+          .collection('users')
+          .doc(userId)
+          .collection('personality')
+          .doc('profile')
+          .get();
+
+      if (doc.exists && doc.data()?['type'] is String) {
+        return doc.data()!['type'] as String;
+      }
+    } catch (e) {
+      print('❌ 無法取得 personality: $e');
+    }
+
+    // ➤ 預設回傳值（例如 "可愛"）
+    return '可愛';
   }
+
 
   Stream<List<Map<String, dynamic>>> getMessagesStream() {
     final userId = currentUserId;

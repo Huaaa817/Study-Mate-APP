@@ -14,13 +14,27 @@ class StudyRepository {
         .collection('study_logs')
         .doc(today);
 
-    await _firestore.runTransaction((tx) async {
-      final snapshot = await tx.get(docRef);
-      final currentSeconds = snapshot.exists ? snapshot['seconds'] as int : 0;
-      tx.set(docRef, {
-        'seconds': currentSeconds + seconds,
-      }, SetOptions(merge: true));
-    });
+    try {
+      await _firestore.runTransaction((tx) async {
+        final snapshot = await tx.get(docRef);
+        
+        if (!snapshot.exists) {
+          // 若文檔不存在，初始化該文檔並設置 seconds 欄位
+          await tx.set(docRef, {
+            'seconds': seconds,
+          });
+        } else {
+          // 如果文檔存在，則累加秒數
+          final currentSeconds = snapshot.data()?['seconds'] as int? ?? 0;
+          await tx.set(docRef, {
+            'seconds': currentSeconds + seconds,
+          }, SetOptions(merge: true));
+        }
+      });
+    } catch (e) {
+      print('Failed to upload study duration: $e');
+      throw Exception('Failed to upload study duration: $e');
+    }
   }
 
   /// 讀取最近 7 天的每日累積秒數（key = yyyy-MM-dd, value = 秒數）
