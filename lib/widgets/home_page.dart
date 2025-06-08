@@ -95,8 +95,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           context: context,
           builder:
               (_) => AlertDialog(
-                title: const Text('No Image Found'),
-                content: const Text('Go to generate'),
+                title: const Text('Generate Studymate'),
+                content: const Text('你還沒擁有Studymate，一起來創造吧'),
                 actions: [
                   TextButton(
                     child: const Text('OK'),

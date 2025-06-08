@@ -112,7 +112,7 @@ function buildPrompt(input: {
 
     Panel 3 (bottom-left):
     - Continue the dance motion from panel 2.
-    - The girl raises her right hand beside her face and waves in a medium-long shot.
+    - The girl is dancing with her right hand beside her face, in a medium-long shot.
     - She has a ${skinTone} skin tone.
     - Her fingers are spread in a lively greeting.
 
