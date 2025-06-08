@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app/view_models/mood_vm.dart';
 
-
 class HomePage extends StatefulWidget {
   final MeViewModel viewModel;
   const HomePage({super.key, required this.viewModel});
@@ -95,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         );
       }
     } else {
-    //_showLoadingDialog();
+      //_showLoadingDialog();
     }
   }
 
@@ -126,27 +125,105 @@ class _HomePageState extends State<HomePage> {
           Positioned.fill(
             child: Image.asset('assets/img/home_bg.jpg', fit: BoxFit.cover),
           ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
 
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.20,
+            left: 0,
+            right: 0,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // ❤️ 心情條 + 愛心 疊在一起
                 Consumer<MoodViewModel>(
                   builder: (context, moodVM, _) {
+                    final filledCount = moodVM.mood.clamp(0, 5); // 限制 0~5
+                    final segmentWidth = 40.0;
+                    final spacing = 8.0;
+
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(5, (index) {
-                        return Icon(
-                          Icons.favorite,
-                          color: index < moodVM.mood ? Colors.red : Colors.grey,
+                        final isFilled = index < filledCount;
+                        final isLastFilled = index == filledCount - 1;
+
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: spacing / 2,
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            clipBehavior: Clip.none,
+                            children: [
+                              // ✅ 條狀格（含漸層 + 圓角）
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child:
+                                    isFilled
+                                        ? ShaderMask(
+                                          shaderCallback: (bounds) {
+                                            final totalWidth =
+                                                segmentWidth * filledCount +
+                                                spacing * (filledCount - 1);
+                                            return const LinearGradient(
+                                              colors: [
+                                                Color(0xFFFFC1CC),
+                                                Color.fromARGB(
+                                                  255,
+                                                  220,
+                                                  76,
+                                                  81,
+                                                ),
+                                              ],
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                            ).createShader(
+                                              Rect.fromLTWH(
+                                                -index *
+                                                    (segmentWidth + spacing),
+                                                0,
+                                                totalWidth,
+                                                10,
+                                              ),
+                                            );
+                                          },
+                                          blendMode: BlendMode.srcATop,
+                                          child: Container(
+                                            width: segmentWidth,
+                                            height: 10,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                        : Container(
+                                          width: segmentWidth,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade200,
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                          ),
+                                        ),
+                              ),
+
+                              if (isLastFilled)
+                                const Positioned(
+                                  top: -20, // 讓它上下置中蓋住條狀條
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                    size: 24,
+                                  ),
+                                ),
+                            ],
+                          ),
                         );
                       }),
                     );
                   },
                 ),
-                const SizedBox(height: 20),
 
-
+                const SizedBox(height: 36), // 留空間給疊上來的愛心
+                // 💬 對話框
                 FutureBuilder<String>(
                   future: _greetingFuture,
                   builder: (context, snapshot) {
@@ -158,31 +235,47 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(color: scheme.error),
                       );
                     } else {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          height: 55, // 可以依實際需要調整高度
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(
-                              255,
-                              255,
-                              255,
-                              255,
-                            ).withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              snapshot.data ?? 'No greeting found',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: scheme.onBackground,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                      return Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // 加上透明度的圖片
+                            Opacity(
+                              opacity: 0.85, // 0.0 = 完全透明，1.0 = 不透明
+                              child: Image.asset(
+                                'assets/img/dialog_box.png',
+                                fit: BoxFit.contain,
+                                width: 360,
                               ),
                             ),
-                          ),
+                            // 文字內容
+                            SizedBox(
+                              width: 300,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                  vertical: 16.0,
+                                ),
+                                child: Text(
+                                  snapshot.data ?? 'No greeting found',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: scheme.onBackground,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.4,
+                                    shadows: [
+                                      Shadow(
+                                        color: Colors.black26,
+                                        offset: Offset(1, 1),
+                                        blurRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -195,6 +288,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+
           if (viewModel.userImageUrl != null)
             Positioned(
               bottom: 0,

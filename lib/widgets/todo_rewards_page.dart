@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -30,17 +31,42 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
     "A peaceful grassy field under soft golden sunlight...",
   ];
 
+  // 🌀 新增動畫 frame 設定
+  final List<String> _gifFrames = [
+    'assets/img/gift1.png',
+    'assets/img/gift2.png',
+    'assets/img/gift3.png',
+    'assets/img/gift4.png',
+  ];
+  int _frameIndex = 0;
+  Timer? _gifTimer;
+
   @override
   void initState() {
     super.initState();
+    _startGifAnimation();
     _generateRewardImage();
+  }
+
+  void _startGifAnimation() {
+    _gifTimer = Timer.periodic(const Duration(milliseconds: 250), (timer) {
+      if (!mounted) return;
+      setState(() {
+        _frameIndex = (_frameIndex + 1) % _gifFrames.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _gifTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _generateRewardImage() async {
     try {
       final userId = Provider.of<MeViewModel>(context, listen: false).myId;
 
-      // 🔍 拿到上次的背景描述
       final backgroundsRef = FirebaseFirestore.instance
           .collection('apps/study_mate/users')
           .doc(userId)
@@ -54,7 +80,6 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
         lastScene = snapshot.docs.first['description'] as String?;
       }
 
-      // 🎲 選擇一個新的 scene，不等於上次的
       final candidates = List<String>.from(_sceneDescriptions);
       if (lastScene != null) {
         candidates.remove(lastScene);
@@ -62,14 +87,10 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
       candidates.shuffle();
       final scene = candidates.first;
 
-      // 🔗 呼叫 API 產生背景圖片
       final imageUrl = await fetchBackground(description: scene);
-
-      // 轉 base64 ➝ bytes
       final base64Data = imageUrl.split(',').last;
       final Uint8List bytes = base64Decode(base64Data);
 
-      // 上傳至 Firebase Storage
       final fileName = 'reward_${DateTime.now().millisecondsSinceEpoch}.png';
       final ref = firebase_storage.FirebaseStorage.instance.ref().child(
         'apps/study_mate/users/$userId/backgrounds/$fileName',
@@ -79,13 +100,9 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
         contentType: 'image/png',
       );
       await ref.putData(bytes, metadata);
-
       final downloadUrl = await ref.getDownloadURL();
-
-      // 等圖片真的可用
       final downloadedBytes = await _waitUntilImageAvailable(downloadUrl);
 
-      // 儲存 Firestore metadata
       await FirebaseFirestore.instance
           .collection('apps/study_mate/users')
           .doc(userId)
@@ -99,6 +116,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
       final imageWidget = Image.memory(downloadedBytes, fit: BoxFit.cover);
 
       if (mounted) {
+        _gifTimer?.cancel(); // 🛑 停止動畫
         setState(() {
           _imageWidget = imageWidget;
           _loading = false;
@@ -107,6 +125,7 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
     } catch (e) {
       print('❌ Failed to generate image: $e');
       if (mounted) {
+        _gifTimer?.cancel(); // 🛑 停止動畫
         setState(() {
           _imageWidget = const Icon(Icons.error, size: 80, color: Colors.red);
           _loading = false;
@@ -143,12 +162,16 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
       body: Center(
         child:
             _loading
-                ? const Column(
+                ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text('獎勵配送中，請稍後...'),
+                    Image.asset(
+                      _gifFrames[_frameIndex],
+                      width: 120,
+                      height: 120,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('獎勵配送中，請稍後...'),
                   ],
                 )
                 : Column(

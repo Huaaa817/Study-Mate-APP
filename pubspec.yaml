@@ -104,6 +104,12 @@ flutter:
      - assets/chat.png
      - assets/logo_google.svg
      - assets/img/default.jpg
+     - assets/img/gift1.png
+     - assets/img/gift2.png
+     - assets/img/gift3.png
+     - assets/img/gift4.png
+     - assets/img/dialog_box.png
+
      - assets/rewards_gift.png
      - assets/focus.png
 
