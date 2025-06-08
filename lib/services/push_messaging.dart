@@ -22,12 +22,8 @@ Future<void> _backgroundMessageHandler(RemoteMessage message) async {
 }
 
 class PushMessagingService {
-  final StudyRepository _studyRepository;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final subscribedTopics = <String>{};
-
-  PushMessagingService({StudyRepository? studyRepository})
-      : _studyRepository = studyRepository ?? StudyRepository();
 
   /// Request permission for receiving push notifications and subscribe to the provided topics. Returns whether the user granted permission.
   Future<bool> initialize({

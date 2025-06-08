@@ -17,11 +17,22 @@ class StudyViewModel extends ChangeNotifier {
   int feed = 0;
 
   // 上傳本次專注時間（秒）
+  // Future<void> uploadStudyDuration(int seconds) async {
+  //   if (seconds > 0) {
+  //     await _repository.addStudyDuration(_userId, seconds);
+  //   }
+  // }
   Future<void> uploadStudyDuration(int seconds) async {
-    if (seconds > 0) {
+  if (seconds > 0) {
+    try {
       await _repository.addStudyDuration(_userId, seconds);
+    } catch (e) {
+      debugPrint('Failed to upload study duration: $e');
+      rethrow;  // 或者顯示錯誤給使用者
     }
   }
+}
+
 
   // 抓取最近 7 天的讀書紀錄
   Future<void> fetchWeeklyLogs() async {

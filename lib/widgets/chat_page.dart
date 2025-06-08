@@ -16,7 +16,11 @@ class ChatPage extends StatelessWidget {
         return vm;
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('聊天頁面')),
+        appBar: AppBar(
+          title: const Text('Chat'),
+          backgroundColor: Theme.of(context).colorScheme.primary, // buildColorTile('primary')
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        ),
         body: const ChatViewBody(),
       ),
     );
