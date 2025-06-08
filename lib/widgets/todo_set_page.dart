@@ -123,16 +123,13 @@ class _TodoSetPageState extends State<TodoSetPage> {
               decoration: InputDecoration(
                 hintText: '輸入你的待辦事項',
                 border: OutlineInputBorder(
-                  borderSide: BorderSide(color: scheme.primaryContainer),
+                  borderSide: BorderSide(color: scheme.outline),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: scheme.primaryContainer),
+                  borderSide: BorderSide(color: scheme.outline),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: scheme.primaryContainer,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: scheme.outline, width: 2),
                 ),
               ),
               onSubmitted: (_) => _handleAdd(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/services/authentication.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'dart:async';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -9,6 +10,44 @@ class AuthPage extends StatefulWidget {
   @override
   State<AuthPage> createState() {
     return _AuthPageState();
+  }
+}
+
+class AnimatedKeyWidget extends StatefulWidget {
+  const AnimatedKeyWidget({super.key});
+
+  @override
+  State<AnimatedKeyWidget> createState() => _AnimatedKeyWidgetState();
+}
+
+class _AnimatedKeyWidgetState extends State<AnimatedKeyWidget> {
+  int _keyImageIndex = 0;
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+      setState(() {
+        _keyImageIndex = (_keyImageIndex + 1) % 4;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 30, bottom: 20),
+      width: 100,
+      height: 100,
+      child: Image.asset('assets/img/key${_keyImageIndex + 1}.png'),
+    );
   }
 }
 
@@ -24,22 +63,14 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                margin: const EdgeInsets.only(
-                  top: 30,
-                  bottom: 20,
-                  left: 20,
-                  right: 20,
-                ),
-                width: 150,
-                child: Image.asset('assets/images/chat.png'),
-              ),
+              const AnimatedKeyWidget(),
+
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 400),
                 child: Card(
