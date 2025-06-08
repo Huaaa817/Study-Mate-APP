@@ -8,6 +8,8 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter_app/view_models/me_wm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_app/widgets/circle_image_button.dart';
+
 
 class TodoRewardsPage extends StatefulWidget {
   const TodoRewardsPage({super.key});
@@ -153,18 +155,26 @@ class _TodoRewardsPageState extends State<TodoRewardsPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(height: 300, child: _imageWidget ?? Container()),
-                    const SizedBox(height: 24),
-                    ElevatedButton.icon(
+                    const SizedBox(height: 30),
+                    // ElevatedButton.icon(
+                    //   onPressed: () {
+                    //     print('[LOG] 收下按鈕被按下，跳轉到 /todo');
+                    //     GoRouter.of(context).go('/todo');
+                    //   },
+                    //   icon: const Icon(Icons.check),
+                    //   label: const Text('收下'),
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: scheme.primary,
+                    //     foregroundColor: scheme.onPrimary,
+                    //   ),
+                    // ),
+                    CircleImageButton(
+                      imagePath: 'assets/rewards_gift.png', // 替換成你的圖示路徑
+                      size: 70,
                       onPressed: () {
                         print('[LOG] 收下按鈕被按下，跳轉到 /todo');
                         GoRouter.of(context).go('/todo');
                       },
-                      icon: const Icon(Icons.check),
-                      label: const Text('收下'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: scheme.primary,
-                        foregroundColor: scheme.onPrimary,
-                      ),
                     ),
                   ],
                 ),

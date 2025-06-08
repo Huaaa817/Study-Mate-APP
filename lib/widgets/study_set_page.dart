@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '/providers/study_duration_provider.dart';
 import '/providers/background_provider.dart';
 import '/view_models/me_wm.dart';
+import 'package:flutter_app/widgets/rounded_rect_button.dart';
 
 class StudySetPage extends StatelessWidget {
   const StudySetPage({super.key});
@@ -40,20 +41,34 @@ class StudySetPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
+            // ElevatedButton(
+            //   onPressed: () {
+            //     final duration = int.tryParse(durationController.text) ?? 0;
+            //     if (duration > 0) {
+            //       context.read<StudyDurationProvider>().setDuration(duration);
+            //       GoRouter.of(context).go('/study?duration=$duration');
+            //     } else {
+            //       ScaffoldMessenger.of(
+            //         context,
+            //       ).showSnackBar(const SnackBar(content: Text('請輸入有效的時間')));
+            //     }
+            //   },
+            //   child: const Text('確認'),
+            // ),
+            RoundedRectButton(
+              text: '確認',
               onPressed: () {
                 final duration = int.tryParse(durationController.text) ?? 0;
                 if (duration > 0) {
                   context.read<StudyDurationProvider>().setDuration(duration);
                   GoRouter.of(context).go('/study?duration=$duration');
                 } else {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('請輸入有效的時間')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('請輸入有效的時間')),
+                  );
                 }
               },
-              child: const Text('確認'),
-            ),
+            )
           ],
         ),
       ),

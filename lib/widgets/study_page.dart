@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
 import '/providers/background_provider.dart';
 import 'package:flutter_app/view_models/study_vm.dart';
-import 'package:flutter_app/view_models/mood_vm.dart';
+import 'package:flutter_app/widgets/rounded_rect_button.dart';
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -161,7 +161,38 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
             left: 0,
             right: 0,
             child: Center(
-              child: ElevatedButton(
+              // child: ElevatedButton(
+              //   onPressed: () async {
+              //     final vm = Provider.of<StudyViewModel>(
+              //       context,
+              //       listen: false,
+              //     );
+
+              //     if (_elapsedSeconds > 0) {
+              //       await vm.uploadStudyDuration(_elapsedSeconds);
+              //     }
+              //     // 先呼叫 updateMood
+              //     // final moodVM = Provider.of<MoodViewModel>(context, listen: false);
+              //     // await moodVM.updateMood();
+
+              //     // 再導航到 home
+              //     GoRouter.of(context).go('/home');
+              //   },
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: scheme.primary,
+              //     foregroundColor: scheme.onPrimary,
+              //     padding: const EdgeInsets.symmetric(
+              //       horizontal: 24,
+              //       vertical: 12,
+              //     ),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //   ),
+              //   child: const Text('結束專注', style: TextStyle(fontSize: 16)),
+              // ),
+              child: RoundedRectButton(
+                text: '結束專注',
                 onPressed: () async {
                   final vm = Provider.of<StudyViewModel>(
                     context,
@@ -171,26 +202,14 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                   if (_elapsedSeconds > 0) {
                     await vm.uploadStudyDuration(_elapsedSeconds);
                   }
-                  // 先呼叫 updateMood
-                  // final moodVM = Provider.of<MoodViewModel>(context, listen: false);
-                  // await moodVM.updateMood();
 
-                  // 再導航到 home
                   GoRouter.of(context).go('/home');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: scheme.primary,
-                  foregroundColor: scheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('結束專注', style: TextStyle(fontSize: 16)),
+                horizontalPadding: 24,
+                verticalPadding: 12,
+                textStyle: const TextStyle(fontSize: 16),
               ),
+
             ),
           ),
         ],

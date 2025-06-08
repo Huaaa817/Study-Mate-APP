@@ -95,7 +95,7 @@ class _ChatViewBodyState extends State<ChatViewBody> {
                     final isUser = msg['sender'] == 'user';
 
                       DateTime parsedTime;
-                      final rawTime = msg['time'];
+                      final rawTime = msg['timestamp'];
                       if (rawTime is Timestamp) {
                         parsedTime = rawTime.toDate();
                       } else if (rawTime is String) {

@@ -2,9 +2,6 @@ import { z } from "genkit";
 import { ai } from "../config";
 import { gemini15Flash } from "@genkit-ai/vertexai";
 
-// A variable to store the conversation history
-// let conversationHistory: string[] = [];
-
 // Define a prompt to generate chat responses
 const chattingGenerator = ai.definePrompt({
   model: gemini15Flash,
@@ -18,8 +15,7 @@ const chattingGenerator = ai.definePrompt({
       {{conversationHistory}}
       對方剛說：{{message}}
       請用「她」的語氣回覆他，根據對話歷史持續進行連貫的聊天，並記住雙方聊過的內容，避免重複提問或回應。
-      並且用「繁體中文」回答。`,
-      // 只輸出對話內容，不要任何多餘說明，
+      務必使用「繁體中文」回答，不要使用簡體中文或日文。`,
   input: {
     schema: z.object({
       message: z.string(),
