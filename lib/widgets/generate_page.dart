@@ -258,18 +258,45 @@ class _GeneratePageState extends State<GeneratePage> {
   }
 
   void _showGeneratingDialog() {
+    Timer? timer; // ✅ 外部先宣告成 nullable
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder:
-          (_) => const AlertDialog(
-            title: Text("正在生成..."),
-            content: SizedBox(
-              height: 80,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-    );
+      builder: (_) {
+        int currentFrame = 0;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            timer ??= Timer.periodic(const Duration(milliseconds: 300), (_) {
+              setState(() {
+                currentFrame = (currentFrame + 1) % 4;
+              });
+            });
+
+            return AlertDialog(
+              title: const Text("正在生成..."),
+              content: SizedBox(
+                height: 120,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/img/gift${currentFrame + 1}.png',
+                      height: 60,
+                    ),
+                    const SizedBox(height: 12),
+                    const CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) {
+      timer?.cancel(); // ✅ 關閉 Dialog 後釋放 Timer
+    });
   }
 
   Future<void> _runFlow() async {
