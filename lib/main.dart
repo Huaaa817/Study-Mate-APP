@@ -191,12 +191,30 @@ import 'repositories/feed_repo.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
+  colorScheme: const ColorScheme(
     brightness: Brightness.light,
-    seedColor: const Color.fromARGB(255, 193, 82, 110),
+    primary: Color(0xFFC1526E), // 主要按鈕、圖示
+    onPrimary: Colors.white, // 主要按鈕內文字
+    primaryContainer: Color(0xFFFFD9E1), // 按鈕背景（例如圓形圖按鈕）
+    onPrimaryContainer: Colors.black, // 按鈕背景文字
+
+    secondary: Color(0xFFE68A9E), // 次要元件（例如邊框）
+    onSecondary: Colors.white,
+    secondaryContainer: Color(0xFFFFE4EC),
+    onSecondaryContainer: Colors.black,
+
+    background: Color(0xFFFFF5F8), // scaffold 背景
+    onBackground: Colors.black,
+
+    surface: Colors.white, // 卡片或面板
+    onSurface: Colors.black,
+
+    error: Colors.red,
+    onError: Colors.white,
   ),
   textTheme: GoogleFonts.latoTextTheme(),
 );
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '/providers/study_duration_provider.dart';
 import '/providers/background_provider.dart';
 import '/view_models/me_wm.dart';
+import 'package:flutter_app/widgets/rounded_rect_button.dart';
 
 class StudySetPage extends StatefulWidget {
   const StudySetPage({super.key});
@@ -121,7 +122,8 @@ class _StudySetPageState extends State<StudySetPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
+                RoundedRectButton(
+                  text: '確認',
                   onPressed: () {
                     final totalSeconds = selectedMinute * 60 + selectedSecond;
                     if (totalSeconds > 0) {
@@ -135,7 +137,6 @@ class _StudySetPageState extends State<StudySetPage> {
                       ).showSnackBar(const SnackBar(content: Text('請選擇有效的時間')));
                     }
                   },
-                  child: const Text('確認'),
                 ),
               ],
             ),

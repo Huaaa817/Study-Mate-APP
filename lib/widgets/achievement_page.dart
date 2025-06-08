@@ -63,6 +63,7 @@
 //     );
 //   }
 // }
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -145,3 +146,229 @@ class _AchievementPageState extends State<AchievementPage> {
     );
   }
 }
+
+// import 'dart:ui';
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
+// import 'package:intl/intl.dart';
+// import 'package:fl_chart/fl_chart.dart';
+// import 'package:flutter_app/view_models/study_vm.dart';
+
+// class AchievementPage extends StatefulWidget {
+//   const AchievementPage({super.key});
+
+//   @override
+//   State<AchievementPage> createState() => _AchievementPageState();
+// }
+
+// class _AchievementPageState extends State<AchievementPage>
+//     with SingleTickerProviderStateMixin {
+//   late Future<Map<String, int>> _dailyLogsFuture;
+//   late AnimationController _heartController;
+//   late Animation<double> _heartAnimation;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     final studyVM = context.read<StudyViewModel>();
+//     _dailyLogsFuture = studyVM.fetchDailyLogs().then((_) => studyVM.dailyLogs);
+
+//     _heartController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 600),
+//     )..repeat(reverse: true);
+
+//     _heartAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+//       CurvedAnimation(parent: _heartController, curve: Curves.easeInOut),
+//     );
+//   }
+
+//   @override
+//   void dispose() {
+//     _heartController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final studyVM = context.watch<StudyViewModel>();
+//     final days = ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
+//     final now = DateTime.now();
+
+//     return Scaffold(
+//       extendBodyBehindAppBar: true,
+//       appBar: AppBar(
+//         title: const Text('Achievement'),
+//         backgroundColor: Colors.transparent,
+//         elevation: 0,
+//       ),
+//       body: Stack(
+//         children: [
+//           // 背景圖
+//           Container(
+//             decoration: const BoxDecoration(
+//               image: DecorationImage(
+//                 image: AssetImage('assets/img/corridor.jpg'),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           // 玻璃模糊與內容
+//           BackdropFilter(
+//             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+//             child: Container(
+//               color: Colors.white.withOpacity(0.1),
+//               padding: const EdgeInsets.symmetric(horizontal: 16),
+//               child: FutureBuilder<Map<String, int>>(
+//                 future: _dailyLogsFuture,
+//                 builder: (context, snapshot) {
+//                   if (!snapshot.hasData) {
+//                     return const Center(child: CircularProgressIndicator());
+//                   }
+
+//                   final data = snapshot.data!;
+//                   final List<BarChartGroupData> barGroups = [];
+
+//                   for (int i = 0; i < 7; i++) {
+//                     final day = now.subtract(Duration(days: 6 - i));
+//                     final key = DateFormat('yyyy-MM-dd').format(day);
+//                     final seconds = data[key] ?? 0;
+//                     final hours = seconds / 3600;
+
+//                     barGroups.add(BarChartGroupData(
+//                       x: i,
+//                       barRods: [
+//                         BarChartRodData(
+//                           toY: hours,
+//                           color: Colors.redAccent,
+//                           width: 18,
+//                           borderRadius: BorderRadius.circular(4),
+//                         ),
+//                       ],
+//                     ));
+//                   }
+
+//                   return ListView(
+//                     children: [
+//                       const SizedBox(height: 80),
+//                       _buildCard(
+//                         child: Column(
+//                           children: [
+//                             const Text('Total Hours',
+//                                 style: TextStyle(fontSize: 18)),
+//                             SizedBox(
+//                               height: 200,
+//                               child: BarChart(
+//                                 BarChartData(
+//                                   titlesData: FlTitlesData(
+//                                     leftTitles: AxisTitles(
+//                                       sideTitles: SideTitles(showTitles: true),
+//                                     ),
+//                                     bottomTitles: AxisTitles(
+//                                       sideTitles: SideTitles(
+//                                         showTitles: true,
+//                                         getTitlesWidget: (value, _) {
+//                                           final index = value.toInt();
+//                                           return Text(
+//                                             days[index],
+//                                             style:
+//                                                 const TextStyle(fontSize: 12),
+//                                           );
+//                                         },
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   borderData: FlBorderData(show: false),
+//                                   barGroups: barGroups,
+//                                   gridData: FlGridData(show: false),
+//                                   maxY: 10,
+//                                 ),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       const SizedBox(height: 12),
+//                       _buildCard(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             const Text('Achievement',
+//                                 style: TextStyle(fontSize: 18)),
+//                             const SizedBox(height: 8),
+//                             Text('🍽️ Feeding frequency : ${studyVM.feed}'),
+//                           ],
+//                         ),
+//                       ),
+//                       const SizedBox(height: 12),
+//                       _buildCard(
+//                         child: Column(
+//                           crossAxisAlignment: CrossAxisAlignment.start,
+//                           children: [
+//                             const Text('Mood',
+//                                 style: TextStyle(fontSize: 18)),
+//                             const SizedBox(height: 8),
+//                             Row(
+//                               children: [
+//                                 ScaleTransition(
+//                                   scale: _heartAnimation,
+//                                   child: const Icon(Icons.favorite,
+//                                       color: Colors.pinkAccent, size: 24),
+//                                 ),
+//                                 const SizedBox(width: 8),
+//                                 Expanded(
+//                                   child: LinearProgressIndicator(
+//                                     value: studyVM.mood / 5,
+//                                     backgroundColor: Colors.grey.shade300,
+//                                     color: Colors.pinkAccent,
+//                                   ),
+//                                 ),
+//                                 const SizedBox(width: 8),
+//                                 Text('${studyVM.mood}'),
+//                               ],
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       const SizedBox(height: 16),
+//                       Center(
+//                         child: ElevatedButton(
+//                           onPressed: () {},
+//                           style: ElevatedButton.styleFrom(
+//                             backgroundColor: Colors.brown[700],
+//                             shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(30),
+//                             ),
+//                           ),
+//                           child: const Padding(
+//                             padding: EdgeInsets.symmetric(
+//                                 horizontal: 24, vertical: 12),
+//                             child: Text('Confirm'),
+//                           ),
+//                         ),
+//                       ),
+//                       const SizedBox(height: 50),
+//                     ],
+//                   );
+//                 },
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildCard({required Widget child}) {
+//     return Container(
+//       margin: const EdgeInsets.symmetric(vertical: 6),
+//       padding: const EdgeInsets.all(16),
+//       decoration: BoxDecoration(
+//         color: Colors.white.withOpacity(0.2),
+//         borderRadius: BorderRadius.circular(20),
+//       ),
+//       child: child,
+//     );
+//   }
+// }
+

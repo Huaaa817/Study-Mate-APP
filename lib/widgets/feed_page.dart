@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '/providers/study_duration_provider.dart';
 import 'package:flutter_app/view_models/feed_vm.dart';
+import 'package:flutter_app/widgets/rounded_rect_button.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({super.key});
@@ -143,24 +144,39 @@ class _FeedPageState extends State<FeedPage> {
                       fit: BoxFit.contain,
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            scheme.secondaryContainer, // 'secondaryContainer'
-                        foregroundColor:
-                            scheme
-                                .onSecondaryContainer, // 'onSecondaryContainer'
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor:
+                    //         scheme.secondaryContainer, // 'secondaryContainer'
+                    //     foregroundColor:
+                    //         scheme
+                    //             .onSecondaryContainer, // 'onSecondaryContainer'
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 24,
+                    //       vertical: 12,
+                    //     ),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(20),
+                    //     ),
+                    //   ),
+                    //   onPressed: _handleButtonPress,
+                    //   child: Text(isLast ? '返回學習' : 'feed'),
+                    // ),
+                    RoundedRectButton(
+                      text: isLast ? '返回學習' : 'feed',
                       onPressed: _handleButtonPress,
-                      child: Text(isLast ? '返回學習' : 'feed'),
-                    ),
+                      borderRadius: 20,
+                      horizontalPadding: 24,
+                      verticalPadding: 12,
+                      textStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      // 要改背景與外框顏色，就自己改RoundedRectButton檔裡的colorScheme或加參數
+                      // 這裡先用 secondaryContainer 作背景，primary 作邊框作為示範：
+                      // 如果要改底色和邊框色，你可以加額外參數，我示範用ThemeData修改
+                    )
                   ],
                 ),
       ),
