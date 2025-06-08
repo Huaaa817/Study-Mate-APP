@@ -9,6 +9,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_app/services/fetch_study_mate.dart';
 import 'package:flutter_app/view_models/personality_vm.dart';
 import 'dart:async';
+import 'package:flutter_app/widgets/swipe_card.dart';
 
 class GeneratePage extends StatefulWidget {
   final MeViewModel viewModel;
@@ -41,20 +42,63 @@ class _GeneratePageState extends State<GeneratePage> {
     'Friendly',
     'Creative',
   ];
-
-  final Map<String, Color> namedColors = {
+  final Map<String, Color> namedColors_hair = {
     'black': Color(0xFF000000),
     'white': Color(0xFFFFFFFF),
     'red': Color(0xFFFF0000),
     'green': Color(0xFF00FF00),
     'blue': Color(0xFF0000FF),
     'yellow': Color(0xFFFFFF00),
-    'Cyan': Color(0xFF00FFFF),
-    'Magenta': Color(0xFFFF00FF),
+    'cyan': Color(0xFF00FFFF),
+    'magenta': Color(0xFFFF00FF),
     'gray': Color(0xFF808080),
+    'darkGray': Color(0xFFA9A9A9),
+    'lightGray': Color(0xFFD3D3D3),
     'brown': Color(0xFFA52A2A),
+    'darkBrown': Color(0xFF5C4033),
+    'chestnut': Color(0xFF964B00),
+    'lightBrown': Color(0xFFB5651D),
+    'ashBrown': Color(0xFF8B6D5C),
+    'goldenBrown': Color(0xFF996515),
+    'auburn': Color(0xFF7C0A02),
+    'burgundy': Color(0xFF800020),
+    'mahogany': Color(0xFFC04000),
+    'copper': Color(0xFFB87333),
+    'platinum': Color(0xFFE5E4E2),
+    'silver': Color(0xFFC0C0C0),
+    'roseGold': Color(0xFFB76E79),
+    'peachBlonde': Color(0xFFFFDAB9),
+    'honeyBlonde': Color(0xFFF0C05A),
+    'strawberryBlonde': Color(0xFFFCB0A9),
+    'ashBlonde': Color(0xFFE6D8AD),
+    'goldenBlonde': Color(0xFFFFDF00),
+    'dirtyBlonde': Color(0xFFB3A369),
+    'lightBlonde': Color(0xFFFFF1B5),
+    'darkBlonde': Color(0xFFBEAC74),
+    'silverBlue': Color(0xFFB0C4DE),
+    'lavender': Color(0xFFE6E6FA),
+    'lilac': Color(0xFFC8A2C8),
+    'pink': Color(0xFFFFC0CB),
+    'rosePink': Color(0xFFFB607F),
+    'purple': Color(0xFF800080),
+    'violet': Color(0xFF8F00FF),
+    'indigo': Color(0xFF4B0082),
+    'navy': Color(0xFF000080),
+    'teal': Color(0xFF008080),
+    'turquoise': Color(0xFF40E0D0),
+    'skyBlue': Color(0xFF87CEEB),
+    'lightBlue': Color(0xFFADD8E6),
+    'darkBlue': Color(0xFF00008B),
+    'mint': Color(0xFF98FF98),
+    'peach': Color(0xFFFFE5B4),
+    'coral': Color(0xFFFF7F50),
     'orange': Color(0xFFFFA500),
+    'beige': Color(0xFFF5F5DC),
+    'ivory': Color(0xFFFFFFF0),
+    'khaki': Color(0xFFF0E68C),
+  };
 
+  final Map<String, Color> namedColors_skin = {
     // Added skin tones
     'pale skin': Color(0xFFFFFBF0),
     'fair skin': Color(0xFFFFEAD3),
@@ -72,11 +116,26 @@ class _GeneratePageState extends State<GeneratePage> {
     return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
   }
 
-  String _approximateColorName(Color color) {
+  String _approximateColorName_hair(Color color) {
     String closestName = '未知色';
     double minDistance = double.infinity;
 
-    namedColors.forEach((name, namedColor) {
+    namedColors_hair.forEach((name, namedColor) {
+      final distance = _colorDistance(color, namedColor);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestName = name;
+      }
+    });
+
+    return closestName;
+  }
+
+  String _approximateColorName_skin(Color color) {
+    String closestName = '未知色';
+    double minDistance = double.infinity;
+
+    namedColors_skin.forEach((name, namedColor) {
       final distance = _colorDistance(color, namedColor);
       if (distance < minDistance) {
         minDistance = distance;
@@ -173,10 +232,10 @@ class _GeneratePageState extends State<GeneratePage> {
     try {
       final data = await fetchStudyMateImage(
         hairLength,
-        _approximateColorName(hairColor),
+        _approximateColorName_hair(hairColor),
         hairstyle,
         'hat',
-        _approximateColorName(skinColor),
+        _approximateColorName_skin(skinColor),
         'smileFeling',
         'calm',
         personality,
@@ -311,14 +370,44 @@ class _GeneratePageState extends State<GeneratePage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('生成形象'),
         actions: [
-          TextButton(
-            onPressed: _runFlow,
-            child: const Text('生成形象', style: TextStyle(color: Colors.black)),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 3,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                onPressed: _runFlow,
+                iconSize: 40, // 比原本小一點
+                padding: EdgeInsets.zero,
+                icon: ClipOval(
+                  child: Image.asset(
+                    'assets/generate.png',
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -326,10 +415,12 @@ class _GeneratePageState extends State<GeneratePage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            const SwipeCard(),
+            // ✅ 已刪除舊的圓形按鈕區塊
             ListTile(
               title: const Text('髮色'),
               subtitle: Text(
-                '${_colorToHex(hairColor)} / ${_approximateColorName(hairColor)}',
+                '${_colorToHex(hairColor)} / ${_approximateColorName_hair(hairColor)}',
               ),
               trailing: CircleAvatar(backgroundColor: hairColor),
               onTap:
@@ -341,7 +432,7 @@ class _GeneratePageState extends State<GeneratePage> {
             ListTile(
               title: const Text('膚色'),
               subtitle: Text(
-                '${_colorToHex(skinColor)} / ${_approximateColorName(skinColor)}',
+                '${_colorToHex(skinColor)} / ${_approximateColorName_skin(skinColor)}',
               ),
               trailing: CircleAvatar(backgroundColor: skinColor),
               onTap:
@@ -351,14 +442,16 @@ class _GeneratePageState extends State<GeneratePage> {
                   ),
             ),
             DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: '頭髮長度'),
+              decoration: const InputDecoration(labelText: '髮長'),
               value: hairLength,
+              onChanged: (value) => setState(() => hairLength = value!),
               items:
                   hairLengthOptions
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
-              onChanged: (val) => setState(() => hairLength = val!),
             ),
+
+            // 其他下拉選單與設定選項保持不變
             DropdownButtonFormField<String>(
               decoration: const InputDecoration(labelText: '髮型'),
               value: hairstyle,
