@@ -77,9 +77,13 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     final vm = Provider.of<TodoListViewModel>(context);
     final todos = vm.todos;
-
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo')),
+      appBar: AppBar(
+        title: const Text('Todo'),
+        backgroundColor: scheme.primary, // buildColorTile('primary')
+        foregroundColor: scheme.onPrimary, // buildColorTile('onPrimary')
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child:
@@ -89,15 +93,32 @@ class _TodoPageState extends State<TodoPage> {
                   itemCount: todos.length,
                   itemBuilder: (context, index) {
                     final todo = todos[index];
-                    return TodoTile(
-                      title: todo['title'],
-                      completed: todo['completed'],
-                      dueDate: todo['dueDate']?.toDate(),
-                      onDelete: () => vm.deleteTodo(todo['id']),
-                      onToggle:
-                          (val) =>
-                              _handleToggle(context, todo['id'], val ?? false),
-                      onEdit: () => _openEditTodoPage(context, todo),
+                    return TweenAnimationBuilder<Offset>(
+                      tween: Tween<Offset>(
+                        begin: const Offset(1, 0), // 從右邊滑入
+                        end: Offset.zero,
+                      ),
+                      duration: Duration(milliseconds: 300 + index * 350),
+                      curve: Curves.easeOut,
+                      builder: (context, offset, child) {
+                        return Transform.translate(
+                          offset: offset * 30, // 位移放大（讓滑入更明顯）
+                          child: child,
+                        );
+                      },
+                      child: TodoTile(
+                        title: todo['title'],
+                        completed: todo['completed'],
+                        dueDate: todo['dueDate']?.toDate(),
+                        onDelete: () => vm.deleteTodo(todo['id']),
+                        onToggle:
+                            (val) => _handleToggle(
+                              context,
+                              todo['id'],
+                              val ?? false,
+                            ),
+                        onEdit: () => _openEditTodoPage(context, todo),
+                      ),
                     );
                   },
                 ),
