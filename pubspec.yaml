@@ -58,6 +58,7 @@ dependencies:
   transparent_image: ^2.0.1
   go_router: ^15.0.0
   shared_preferences: ^2.2.2
+  fl_chart: ^0.64.0
 
 dev_dependencies:
   flutter_test:
@@ -104,6 +105,13 @@ flutter:
      - assets/logo_google.svg
      - assets/img/default.jpg
      - assets/generate.png
+     - assets/img/gift1.png
+     - assets/img/gift2.png
+     - assets/img/gift3.png
+     - assets/img/gift4.png
+     - assets/img/dialog_box.png
+     - assets/rewards_gift.png
+     - assets/focus.png
 
 
 

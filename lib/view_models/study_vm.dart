@@ -7,25 +7,30 @@ class StudyViewModel extends ChangeNotifier {
 
   StudyViewModel(this._repository, this._userId);
 
-  Map<String, int> _dailyLogs = {};
-  Map<String, int> get dailyLogs => _dailyLogs;
+  // 用來存儲最近 7 天的讀書資料
+  Map<String, int> _weeklyLogs = {};
+  Map<String, int> get weeklyLogs => _weeklyLogs;
 
-  /// 上傳本次專注時間（秒）
+  // 用來存儲某一天的具體資料
+  int seconds = 0;
+  int mood = 0;
+  int feed = 0;
+
+  // 上傳本次專注時間（秒）
   Future<void> uploadStudyDuration(int seconds) async {
     if (seconds > 0) {
       await _repository.addStudyDuration(_userId, seconds);
     }
   }
 
-  /// 抓取最近 7 天的每日讀書時間
-  Future<void> fetchDailyLogs() async {
-    _dailyLogs = await _repository.getDailyStudyLog(_userId);
+  // 抓取最近 7 天的讀書紀錄
+  Future<void> fetchWeeklyLogs() async {
+    // 使用 repository 取得最近 7 天的資料
+    _weeklyLogs = await _repository.getDailyStudyLog(_userId);
     notifyListeners();
   }
 
-  int seconds = 0;
-  int mood = 0;
-  int feed = 0;
+  // 抓取某一天的具體資料
   Future<void> fetchDataByDate(String date) async {
     final data = await _repository.fetchLogByDate(_userId, date);
     seconds = data['seconds'] ?? 0;

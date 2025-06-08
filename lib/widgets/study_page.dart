@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_app/view_models/me_wm.dart';
 import '/providers/background_provider.dart';
 import 'package:flutter_app/view_models/study_vm.dart';
-import 'package:flutter_app/view_models/mood_vm.dart';
+import 'package:flutter_app/widgets/rounded_rect_button.dart';
 
 class StudyPage extends StatefulWidget {
   const StudyPage({super.key});
@@ -134,34 +134,112 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
           else
             const Center(child: CircularProgressIndicator()),
 
+          // Positioned(
+          //   top: MediaQuery.of(context).padding.top + 8,
+          //   left: 16,
+          //   right: 16,
+          //   child: Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     decoration: BoxDecoration(
+          //       color: scheme.primaryContainer.withOpacity(0.8),
+          //       borderRadius: BorderRadius.circular(12),
+          //     ),
+          //     child: Text(
+          //       '累積專注時間：${_formatTime(_elapsedSeconds)}',
+          //       textAlign: TextAlign.center,
+          //       style: TextStyle(
+          //         fontSize: 18,
+          //         color: scheme.onPrimaryContainer,
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
           Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '累積專注時間：${_formatTime(_elapsedSeconds)}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: scheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
+            top: MediaQuery.of(context).size.height * 0.15,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Transform.translate(
+                offset: const Offset(0, -90), // 整體往上移更多
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // 半透明圓形背景取代原本的圖片
+                    Container(
+                      width: 500,
+                      height: 500,
+                      decoration: BoxDecoration(
+                        color: scheme.primaryContainer.withOpacity(0.25),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: scheme.primary.withOpacity(0.2),
+                            blurRadius: 20,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 倒數時間（中間）字體變大
+                    Text(
+                      _formatTime(_elapsedSeconds),
+                      style: TextStyle(
+                        fontSize: 64,  // 從48放大到64
+                        fontWeight: FontWeight.bold,
+                        color: scheme.primary,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // 專注時間文字（較上方），往上調整一點
+                    Positioned(
+                      top: 60, // 從80往上調整到60
+                      child: Text(
+                        '專注時間',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: scheme.primary.withOpacity(0.95),
+                          letterSpacing: 1.2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black26,
+                              blurRadius: 4,
+                              offset: Offset(1, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
 
+
+
+
+
+
+
+
           Positioned(
-            bottom: 40,
+            bottom: 80,
             left: 0,
             right: 0,
             child: Center(
-              child: ElevatedButton(
+              child: RoundedRectButton(
+                text: '結束專注',
                 onPressed: () async {
                   final vm = Provider.of<StudyViewModel>(
                     context,
@@ -171,26 +249,14 @@ class _StudyPageState extends State<StudyPage> with WidgetsBindingObserver {
                   if (_elapsedSeconds > 0) {
                     await vm.uploadStudyDuration(_elapsedSeconds);
                   }
-                  // 先呼叫 updateMood
-                  // final moodVM = Provider.of<MoodViewModel>(context, listen: false);
-                  // await moodVM.updateMood();
 
-                  // 再導航到 home
                   GoRouter.of(context).go('/home');
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: scheme.primary,
-                  foregroundColor: scheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Text('結束專注', style: TextStyle(fontSize: 16)),
+                horizontalPadding: 24,
+                verticalPadding: 12,
+                textStyle: const TextStyle(fontSize: 16),
               ),
+
             ),
           ),
         ],

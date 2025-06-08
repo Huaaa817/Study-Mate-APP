@@ -22,6 +22,7 @@ class ChatViewModel extends ChangeNotifier {
 
   void _init() async {
     _personality = await _repository.fetchUserPersonality();
+    debugPrint('🧠 使用者的 personality: $_personality');
 
     _messageSubscription = _repository.getMessagesStream().listen((event) {
       _messages = event;
