@@ -331,7 +331,12 @@ class _GeneratePageState extends State<GeneratePage> {
         'POST',
         Uri.parse('https://api.remove.bg/v1.0/removebg'),
       );
-      request.headers['X-Api-Key'] = 'YOUR_API_KEY'; // 替換成你的 API Key
+<<<<<<< HEAD
+      request.headers['X-Api-Key'] = 'pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+=======
+      request.headers['X-Api-Key'] =
+          'pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+>>>>>>> 4f9fe56a98834a97dfdd15aff40c55455e5b1c05
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',
@@ -344,13 +349,18 @@ class _GeneratePageState extends State<GeneratePage> {
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        final result = await response.stream.toBytes();
-        finalImageBytes = result; // ✅ 用去背後圖片取代
+        final Uint8List result = await response.stream.toBytes();
+        setState(() {
+          finalImageBytes = result;
+        }); // ✅ 用去背後圖片取代
         print('去背成功');
       } else {
         final errorMsg = await response.stream.bytesToString();
         print('去背失敗: $errorMsg');
       }
+      // ✅ 在這裡比較原圖與去背後圖的大小
+      print('原圖大小: ${imageBytes.length}');
+      print('去背圖大小: ${finalImageBytes.length}');
 
       Navigator.of(context).pop(); // 關閉 loading dialog
 
