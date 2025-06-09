@@ -105,9 +105,10 @@ class _AchievementPageState extends State<AchievementPage> {
           ),
         ],
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 日期選擇區塊
             Row(
@@ -142,7 +143,6 @@ class _AchievementPageState extends State<AchievementPage> {
               ],
             ),
             const SizedBox(height: 24),
-
             Container(
               decoration: BoxDecoration(
                 color: theme.colorScheme.secondaryContainer.withOpacity(0.6),
