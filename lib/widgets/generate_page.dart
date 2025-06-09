@@ -304,8 +304,7 @@ class _GeneratePageState extends State<GeneratePage> {
         'POST',
         Uri.parse('https://api.remove.bg/v1.0/removebg'),
       );
-      request.headers['X-Api-Key'] =
-          'pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+      request.headers['X-Api-Key'] = 'pUu4KGwYyRf9PMZ'; // 替換成你的 API Key
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',
@@ -532,13 +531,13 @@ class _GeneratePageState extends State<GeneratePage> {
                 ),
                 child: IconButton(
                   onPressed: _runFlow,
-                  iconSize: 40,
+                  iconSize: 80,
                   padding: EdgeInsets.zero,
                   icon: ClipOval(
                     child: Image.asset(
                       'assets/generate.png',
-                      width: 40,
-                      height: 40,
+                      width: 80,
+                      height: 80,
                       fit: BoxFit.cover,
                     ),
                   ),

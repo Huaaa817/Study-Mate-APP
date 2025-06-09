@@ -123,14 +123,26 @@ class _SwipeCardState extends State<SwipeCard> {
                         constraints: const BoxConstraints(
                           maxWidth: 250,
                         ), // 防止太長超出卡片
-                        child: Text(
-                          currentCard['describe'] ?? '',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.left,
-                          softWrap: true,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              '生成指南',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              currentCard['describe'] ?? '',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                              softWrap: true,
+                            ),
+                          ],
                         ),
                       ),
                     ),

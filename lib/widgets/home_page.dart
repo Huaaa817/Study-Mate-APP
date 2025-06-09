@@ -315,7 +315,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   },
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 50),
                 if (viewModel.userImageUrl == null)
                   const CircularProgressIndicator(),
               ],
@@ -324,7 +324,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
           if (viewModel.userImageUrl != null)
             Positioned(
-              bottom: 0,
+              bottom: -50,
               left: 0,
               right: 0,
               child: Center(
@@ -382,10 +382,18 @@ class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
     super.dispose();
   }
 
+  // void _startFrameLoop() {
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     setState(() {
+  //       _currentFrame = (_currentFrame + 1) % 4;
+  //     });
+  //   });
+  // }
+
   void _startFrameLoop() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() {
-        _currentFrame = (_currentFrame + 1) % 4;
+        _currentFrame = (_currentFrame + 1) % 3;
       });
     });
   }
@@ -395,6 +403,9 @@ class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
     if (widget.url.isEmpty) {
       return const Text("圖片網址無效");
     }
+
+    final List<int> frameSequence = [1, 2, 3];
+    final frame = frameSequence[_currentFrame % frameSequence.length];
 
     return SizedBox(
       width: 400,
@@ -408,8 +419,8 @@ class _AnimatedImageFromUrlState extends State<_AnimatedImageFromUrl> {
               final height = constraints.maxHeight;
               const double scale = 2.0;
 
-              final dx = (_currentFrame % 2) * width / 2;
-              final dy = (_currentFrame ~/ 2) * height / 2;
+              final dx = (frame % 2) * width / 2;
+              final dy = (frame ~/ 2) * height / 2;
 
               return Transform(
                 transform:

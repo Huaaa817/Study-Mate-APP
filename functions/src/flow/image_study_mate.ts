@@ -85,7 +85,7 @@ function buildPrompt(input: {
     } = input.imageSetting;
 
     return `
-    You are a Japanese anime illustrator. Create a ${personality1} anime-style girl in a four-panel (四宮格) sequence. She has a ${skinTone} skin tone and wears her hair in a ${hairLength.toLowerCase()}, ${hairStyled.toLowerCase()} style. Follow the detailed instructions below:
+  You are a Japanese anime illustrator. Create a ${personality1} anime-style girl in a four-panel (四宮格) sequence. She has a ${skinTone} skin tone and wears her hair in a ${hairLength.toLowerCase()}, ${hairStyled.toLowerCase()} style. Follow the detailed instructions below:
 
     Global requirements for all four panels:
     - No borders or frames between the panels.
@@ -95,7 +95,7 @@ function buildPrompt(input: {
     - The girl's body stays centered in every frame.
     - Keep head position and framing consistent.
     - The girl must align with the bottom edge of each panel, so she is drawn starting from the bottom of the panel upwards.
-
+   
     Panel 1 (top-left):
     - The girl is sitting and reading a book.
     - She wears a school uniform and has long ${hairColor} hair.
@@ -106,15 +106,14 @@ function buildPrompt(input: {
     panel 2, 3, 4 should depict a different stage of the dancing movement to form a smooth animation, and ensure Each panel is a medium-long shot.
     Panel 2 (top-right):
     - A new action begins (not related to panel 1).
-    - The girl is now dancing in a medium-long shot.
+    - The girl is now dancing and greeting in a medium-long shot.
     - She has a ${skinTone} skin tone.
     - Medium-long shot, same framing and position.
 
     Panel 3 (bottom-left):
     - Continue the dance motion from panel 2.
-    - The girl is dancing with her right hand beside her face, in a medium-long shot.
+    - The girl is dancing and greeting in a medium-long shot.
     - She has a ${skinTone} skin tone.
-    - Her fingers are spread in a lively greeting.
 
     Panel 4 (bottom-right):
     - Continue smoothly from panel 3.
@@ -123,6 +122,7 @@ function buildPrompt(input: {
     - Same style and consistent framing.
 
     Remember: all four panels must follow the global requirements above.
+
     `;
     // return `You are a Japanese animation illustrator. Create a four-panel sequence (四宮格) of a cheerful anime-style girl with consistent head position in each frame. She is dancing (打招呼) in medium-long shot, wearing a uniform, with long ${hairColor} hair. Each panel should depict a different stage of the greeting movement to form a smooth animation.`
     //     ;
