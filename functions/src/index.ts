@@ -65,22 +65,29 @@ export const studyMateAppUnsubscribeFromTopic = https.onCall(async (request) => 
   }
 });
 
-// 定時檢查並發送通知的功能
 export const notifyLowMoodUsers = onSchedule("every 1 minutes", async (event) => {
   try {
     // 從 Firestore 取得所有用戶資料
     const usersSnapshot = await db.collection('apps/study_mate/users').get();
     const lowMoodUsers: { userId: string; moodValue: number }[] = [];
 
+    // 使用 Set 儲存已處理過的 userId，避免重複處理
+    const processedUsers = new Set<string>();
+
     // 遍歷所有用戶，找出 mood 值低於 3 的用戶
     usersSnapshot.forEach((userDoc) => {
       const moodStatus = userDoc.data().moodStatus;
-      // 檢查 moodStatus 中的 value 是否存在且小於 3
-      if (moodStatus && typeof moodStatus.value === "number" && moodStatus.value < 3) {
-        lowMoodUsers.push({
-          userId: userDoc.id,
-          moodValue: moodStatus.value, // 這裡是取 value 作為心情值
-        });
+      // 檢查 moodStatus 中的 value 是否存在且小於 4
+      if (moodStatus && typeof moodStatus.value === "number" && moodStatus.value < 4) {
+        const userId = userDoc.id;
+        // 只有當 userId 尚未處理過時才加入
+        if (!processedUsers.has(userId)) {
+          lowMoodUsers.push({
+            userId: userDoc.id,
+            moodValue: moodStatus.value, // 這裡是取 value 作為心情值
+          });
+          processedUsers.add(userId); // 標記該用戶已處理過
+        }
       }
     });
 
@@ -91,22 +98,32 @@ export const notifyLowMoodUsers = onSchedule("every 1 minutes", async (event) =>
     }
 
     // 為每個 mood 值低於 3 的用戶發送推播通知
-    const promises = lowMoodUsers.map(async ({ userId, moodValue }) => {
+    for (const { userId, moodValue } of lowMoodUsers) {
       const userDoc = await db.doc(`apps/study_mate/users/${userId}`).get();
       const fcmToken = userDoc.data()?.fcmToken;
 
       // 檢查用戶是否有 FCM token
       if (!fcmToken) {
         console.log(`User ${userId} has no FCM token.`);
-        return;
+        continue; // 沒有 token 時跳過此用戶
+      }
+
+      // 根據 moodValue 值選擇不同的通知內容
+      let notificationBody = '';
+      if (moodValue >= 1 && moodValue < 2) {
+        notificationBody = `你再不來我要離家出走了！`;
+      } else if (moodValue >= 2 && moodValue < 3) {
+        notificationBody = `我很傷心，你都不來看看我！`;
+      } else {
+        notificationBody = `我餓了！快來讀書餵我！`;
       }
 
       // 構建推播通知消息
       const message = {
         token: fcmToken,
         notification: {
-          title: "心情提醒",
-          body: `您的心情值目前為 ${moodValue}，建議您稍作休息或調整心情喔！`,
+          title: "studyMate還在等你回來><",
+          body: notificationBody,  // 動態生成通知內容
         },
         data: {
           function: "notifyLowMoodUsers",
@@ -121,12 +138,10 @@ export const notifyLowMoodUsers = onSchedule("every 1 minutes", async (event) =>
       } catch (error) {
         console.error(`Failed to send notification to user ${userId}:`, error);
       }
-    });
-
-    // 等待所有通知發送完畢
-    await Promise.all(promises);
+    }
 
   } catch (error) {
     console.error("Error running notifyLowMoodUsers:", error);
   }
 });
+

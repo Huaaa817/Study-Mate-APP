@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   },
                 ),
 
-                const SizedBox(height: 36), // 留空間給疊上來的愛心
+                const SizedBox(height: 40), // 留空間給疊上來的愛心
                 // 💬 對話框
                 FutureBuilder<String>(
                   future: _greetingFuture,
@@ -270,14 +270,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             alignment: Alignment.center,
                             children: [
                               // 對話框背景圖片（可自動變高）
-                              Opacity(
-                                opacity: 0.85,
-                                child: Image.asset(
-                                  'assets/img/dialog_box.png',
-                                  width: 360,
-                                  fit: BoxFit.fill,
+                              Positioned(
+                                top: -18, // 負數表示往上移一點點，依實際調整（如 -12, -16）
+                                child: Opacity(
+                                  opacity: 0.85,
+                                  child: Image.asset(
+                                    'assets/img/dialog_box.png',
+                                    width: 360,
+                                    height: 150,
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
+
                               // 文字部分
                               ConstrainedBox(
                                 constraints: const BoxConstraints(
