@@ -1,12 +1,11 @@
 // import 'package:cloud_functions/cloud_functions.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:flutter/foundation.dart';
-// import 'package:flutter_app/repositories/study_repo.dart';
+// // import 'package:flutter_app/repositories/study_repo.dart';
 // import "package:universal_html/html.dart" as html;
 // import 'package:cloud_firestore/cloud_firestore.dart';
 
 // /// VAPID key for web push notifications.
-// /// FIXME: DO NOT hardcode the VAPID key in production. Store it securely in environment variables using, for example, the `flutter_dotenv` package
 // const String vapidKey =
 //     'BG_NrbubPOe224xi15jFcOJncKG7xp1AKdKjAQu_rfLPwGFZu9C6jxYCKyahRhtM9DaNkAvTfH_G3-1fbOpBpBA';
 
@@ -23,7 +22,7 @@
 
 // class PushMessagingService {
 //   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-//   final subscribedTopics = <String>{};
+//   final Set<String> subscribedTopics = <String>{};
 
 //   /// Request permission for receiving push notifications and subscribe to the provided topics. Returns whether the user granted permission.
 //   Future<bool> initialize({
@@ -40,12 +39,10 @@
 //     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
 //       print(
 //           'RemoteMessagingService: Received a message in the foreground: ${message.data.toString()}');
-//       // Process the message here
 //     });
 //     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
 //       print(
 //           'RemoteMessagingService: Opened a notification message: ${message.data.toString()}');
-//       // Process the open event here
 //     });
 //     FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
@@ -89,8 +86,7 @@
 //     // Subscribe to topics
 //     _subscribeToTopics(token, topics);
 
-//     // Optionally, perform additional logic with the token, such as saving it to Firestore
-//     // 寫入 token 到 Firestore 使用者文件中
+//     // Write token to Firestore
 //     try {
 //       await FirebaseFirestore.instance
 //           .collection('apps/study_mate/users')
@@ -110,7 +106,7 @@
 //         if (kIsWeb) {
 //           final HttpsCallable callable = FirebaseFunctions.instance
 //               .httpsCallable('studyMateAppSubscribeToTopic');
-//           futures.add(callable.call(<String, dynamic>{
+//           futures.add(callable.call(<String, dynamic> {
 //             'token': token,
 //             'topic': topic,
 //           }));
@@ -135,7 +131,7 @@
 //       if (kIsWeb) {
 //         final HttpsCallable callable = FirebaseFunctions.instance
 //             .httpsCallable('studyMateAppUnsubscribeFromTopic');
-//         futures.add(callable.call(<String, dynamic>{
+//         futures.add(callable.call(<String, dynamic> {
 //           'token': token,
 //           'topic': topic,
 //         }));
@@ -150,7 +146,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_app/repositories/study_repo.dart';
 import "package:universal_html/html.dart" as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -161,8 +156,7 @@ const String vapidKey =
 /// Annotated as entry point to prevent being tree-shaken in release mode.
 @pragma('vm:entry-point')
 Future<void> _backgroundMessageHandler(RemoteMessage message) async {
-  print(
-      "RemoteMessagingService: Received a data message in the background: ${message.data.toString()}");
+  print("RemoteMessagingService: Received a data message in the background: ${message.data.toString()}");
 
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
@@ -175,30 +169,34 @@ class PushMessagingService {
 
   /// Request permission for receiving push notifications and subscribe to the provided topics. Returns whether the user granted permission.
   Future<bool> initialize({
-    required String userId,
+    required String? userId, // Make userId nullable to handle cases where user is not logged in.
     required List<String> topics,
   }) async {
+    if (userId == null) {
+      // If the user is not logged in, do not proceed with push notification setup.
+      print("User is not logged in. Push notifications are not enabled.");
+      return false;
+    }
+
     final settings = await _firebaseMessaging.requestPermission();
     if (settings.authorizationStatus != AuthorizationStatus.authorized) {
       // User denied permission
+      print("User did not grant push notification permission.");
       return false;
     }
 
     // Register callbacks for incoming messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print(
-          'RemoteMessagingService: Received a message in the foreground: ${message.data.toString()}');
+      print('RemoteMessagingService: Received a message in the foreground: ${message.data.toString()}');
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print(
-          'RemoteMessagingService: Opened a notification message: ${message.data.toString()}');
+      print('RemoteMessagingService: Opened a notification message: ${message.data.toString()}');
     });
     FirebaseMessaging.onBackgroundMessage(_backgroundMessageHandler);
 
     // Register the service worker for web
     if (kIsWeb) {
-      await html.window.navigator.serviceWorker
-          ?.register('/firebase-messaging-sw.js');
+      await html.window.navigator.serviceWorker?.register('/firebase-messaging-sw.js');
     }
 
     // Get the device token and sync user doc
@@ -233,7 +231,7 @@ class PushMessagingService {
   Future<void> _postUpdateToken(
       String userId, String token, List<String> topics) async {
     // Subscribe to topics
-    _subscribeToTopics(token, topics);
+    await _subscribeToTopics(token, topics);
 
     // Write token to Firestore
     try {
