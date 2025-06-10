@@ -54,45 +54,44 @@ class _FeedPageState extends State<FeedPage> {
   //   });
   // }
   @override
-    void initState() {
-      super.initState();
+  void initState() {
+    super.initState();
 
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        final duration = context.read<StudyDurationProvider>().duration;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final duration = context.read<StudyDurationProvider>().duration;
 
-        if (duration >= 35) {
-          _imagePaths = [
-            'assets/img/meat1.jpg',
-            'assets/img/meat2.jpg',
-            'assets/img/meat3.jpg',
-            'assets/img/meat4.jpg',
-          ];
-        } else if (duration >= 25) {
-          _imagePaths = [
-            'assets/img/ice_cream1.jpg',
-            'assets/img/ice_cream2.jpg',
-            'assets/img/ice_cream3.jpg',
-            'assets/img/ice_cream4.jpg',
-          ];
-        } else {
-          _imagePaths = [
-            'assets/img/momo1.jpg',
-            'assets/img/momo2.jpg',
-            'assets/img/momo3.jpg',
-            'assets/img/momo4.jpg',
-          ];
-        }
+      if (duration >= 10) {
+        _imagePaths = [
+          'assets/img/meat1.jpg',
+          'assets/img/meat2.jpg',
+          'assets/img/meat3.jpg',
+          'assets/img/meat4.jpg',
+        ];
+      } else if (duration >= 8) {
+        _imagePaths = [
+          'assets/img/ice_cream1.jpg',
+          'assets/img/ice_cream2.jpg',
+          'assets/img/ice_cream3.jpg',
+          'assets/img/ice_cream4.jpg',
+        ];
+      } else {
+        _imagePaths = [
+          'assets/img/momo1.jpg',
+          'assets/img/momo2.jpg',
+          'assets/img/momo3.jpg',
+          'assets/img/momo4.jpg',
+        ];
+      }
 
-        // 新增計數呼叫
-        await context.read<FeedViewModel>().addFeedCount();
-        debugPrint('add feed count');
+      // 新增計數呼叫
+      await context.read<FeedViewModel>().addFeedCount();
+      debugPrint('add feed count');
 
-        setState(() {
-          _initialized = true;
-        });
+      setState(() {
+        _initialized = true;
       });
-    }
-
+    });
+  }
 
   void _handleButtonPress() {
     if (_imagePaths == null) return;
@@ -169,14 +168,15 @@ class _FeedPageState extends State<FeedPage> {
                       horizontalPadding: 24,
                       verticalPadding: 12,
                       textStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondaryContainer,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                       // 要改背景與外框顏色，就自己改RoundedRectButton檔裡的colorScheme或加參數
                       // 這裡先用 secondaryContainer 作背景，primary 作邊框作為示範：
                       // 如果要改底色和邊框色，你可以加額外參數，我示範用ThemeData修改
-                    )
+                    ),
                   ],
                 ),
       ),

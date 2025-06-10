@@ -333,7 +333,7 @@ class _GeneratePageState extends State<GeneratePage> {
       );
 
       request.headers['X-Api-Key'] =
-          'pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+          'X9Rds1bbxpjagPedUbDEioEz'; // 替換成你的 API Key
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',

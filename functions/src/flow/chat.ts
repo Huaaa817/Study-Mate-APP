@@ -51,16 +51,27 @@ export const greetingFlow = ai.defineFlow(
                     ? profileDoc.data()!.type
                     : "可愛";
 
-            // 查詢今天的 todos（依據系統時區，例如台灣 UTC+8）
+            // // 查詢今天的 todos（依據系統時區，例如台灣 UTC+8）
+            // const now = new Date();
+
+            // // 今天 00:00
+            // const today = new Date(now);
+            // today.setHours(0, 0, 0, 0);
+
+            // // 明天 00:00
+            // const tomorrow = new Date(today);
+            // tomorrow.setDate(today.getDate() + 1);
+
+            // 當前時間（UTC）
             const now = new Date();
+            console.log("Now (UTC):", now.toISOString());
 
-            // 今天 00:00
-            const today = new Date(now);
-            today.setHours(0, 0, 0, 0);
-
-            // 明天 00:00
-            const tomorrow = new Date(today);
-            tomorrow.setDate(today.getDate() + 1);
+            // 建立台灣 UTC+8 今天的 00:00
+            const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, -8));
+            console.log("Today (UTC+8):", today.toISOString());
+            // 建立台灣 UTC+8 明天的 00:00
+            const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 2, -8));
+            console.log("Tomorrow (UTC+8):", tomorrow.toISOString());
 
             const todosSnapshot = await db
                 .collection("apps")
@@ -71,7 +82,7 @@ export const greetingFlow = ai.defineFlow(
                 .where("dueDate", ">=", today)
                 .where("dueDate", "<", tomorrow)
                 .get();
-
+            console.log("Fetched Todos:", todosSnapshot.docs.map(doc => doc.data()));
             const todos = todosSnapshot.docs
                 .map((doc) => doc.data())
                 .filter((todo) => todo.isDone === false);
