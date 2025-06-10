@@ -55,6 +55,7 @@ class _GeneratePageState extends State<GeneratePage> {
   @override
   void dispose() {
     _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -322,9 +323,6 @@ class _GeneratePageState extends State<GeneratePage> {
       }
       final Uint8List imageBytes = base64Decode(base64Str);
 
-      // 🟡 預設圖片為原圖
-      Uint8List finalImageBytes = imageBytes;
-
       print('獲取照片成功，開始嘗試去背...');
 
       final request = http.MultipartRequest(
@@ -333,7 +331,12 @@ class _GeneratePageState extends State<GeneratePage> {
       );
 
       request.headers['X-Api-Key'] =
+<<<<<<< HEAD
           'X9Rds1bbxpjagPedUbDEioEz'; // 替換成你的 API Key
+=======
+          'mLDmDTfS3hBr778jmovUbbLu'; // pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+
+>>>>>>> 555f14f2f4dd7b32840b077c6bab3a9356f0ba3c
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',
@@ -347,22 +350,31 @@ class _GeneratePageState extends State<GeneratePage> {
 
       if (response.statusCode == 200) {
         final Uint8List result = await response.stream.toBytes();
-        setState(() {
-          finalImageBytes = result;
-        }); // ✅ 用去背後圖片取代
+
+        setState(() => _generatedImage = result); // ✅ 顯示去背後圖片
+        //_showGeneratedImageDialog();
         print('去背成功');
       } else {
         final errorMsg = await response.stream.bytesToString();
+        setState(() => _generatedImage = imageBytes); // ✅ 顯示去背後圖片
+        //_showGeneratedImageDialog();
         print('去背失敗: $errorMsg');
       }
       // ✅ 在這裡比較原圖與去背後圖的大小
+      if (_generatedImage!.length >= imageBytes.length) {
+        print('⚠️ 警告：儲存的圖片大小與原圖一樣，可能是原圖不是去背圖！');
+      }
+
       print('原圖大小: ${imageBytes.length}');
-      print('去背圖大小: ${finalImageBytes.length}');
+      print('去背圖大小: ${_generatedImage!.length}');
+      Navigator.of(context).pop();
+      await Future.delayed(Duration(milliseconds: 50)); // 給 UI 一點時間處理狀態更新
 
-      Navigator.of(context).pop(); // 關閉 loading dialog
+      if (mounted) _showGeneratedImageDialog();
+      //_showGeneratedImageDialog();
+      // 關閉 loading dialog
 
-      setState(() => _generatedImage = finalImageBytes); // ✅ 顯示去背後圖片
-      _showGeneratedImageDialog(finalImageBytes); // ✅ 用去背後圖片做預覽與儲存
+      // ✅ 用去背後圖片做預覽與儲存
     } catch (e) {
       Navigator.of(context).pop();
       print('發生錯誤: $e');
@@ -372,14 +384,16 @@ class _GeneratePageState extends State<GeneratePage> {
     }
   }
 
-  void _showGeneratedImageDialog(Uint8List imageBytes) {
+  void _showGeneratedImageDialog() {
+    print('去背圖大小???: ${_generatedImage!.length}');
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder:
           (_) => AlertDialog(
             title: const Text("生成結果"),
-            content: Image.memory(imageBytes),
+            content: Image.memory(_generatedImage!),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -387,7 +401,7 @@ class _GeneratePageState extends State<GeneratePage> {
               ),
               TextButton(
                 onPressed: () async {
-                  final base64Image = base64Encode(imageBytes);
+                  final base64Image = base64Encode(_generatedImage!);
                   await widget.viewModel.saveUserImage(base64Image);
 
                   final userId =
@@ -560,13 +574,13 @@ class _GeneratePageState extends State<GeneratePage> {
                 ),
                 child: IconButton(
                   onPressed: _runFlow,
-                  iconSize: 40,
+                  iconSize: 80,
                   padding: EdgeInsets.zero,
                   icon: ClipOval(
                     child: Image.asset(
                       'assets/generate.png',
-                      width: 40,
-                      height: 40,
+                      width: 80,
+                      height: 80,
                       fit: BoxFit.cover,
                     ),
                   ),
