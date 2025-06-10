@@ -357,10 +357,17 @@ class _GeneratePageState extends State<GeneratePage> {
         print('去背失敗: $errorMsg');
       }
       // ✅ 在這裡比較原圖與去背後圖的大小
+      if (_generatedImage!.length >= imageBytes.length) {
+        print('⚠️ 警告：儲存的圖片大小與原圖一樣，可能是原圖不是去背圖！');
+      }
+
       print('原圖大小: ${imageBytes.length}');
       print('去背圖大小: ${_generatedImage!.length}');
       Navigator.of(context).pop();
-      _showGeneratedImageDialog();
+      await Future.delayed(Duration(milliseconds: 50)); // 給 UI 一點時間處理狀態更新
+
+      if (mounted) _showGeneratedImageDialog();
+      //_showGeneratedImageDialog();
       // 關閉 loading dialog
 
       // ✅ 用去背後圖片做預覽與儲存
@@ -374,7 +381,8 @@ class _GeneratePageState extends State<GeneratePage> {
   }
 
   void _showGeneratedImageDialog() {
-    print('去背圖大小: ${_generatedImage!.length}');
+    print('去背圖大小???: ${_generatedImage!.length}');
+
     showDialog(
       context: context,
       barrierDismissible: false,
