@@ -21,11 +21,11 @@ class GeneratePage extends StatefulWidget {
 }
 
 class _GeneratePageState extends State<GeneratePage> {
-  Color hairColor = Colors.brown;
+  Color hairColor = Colors.blue;
   Color skinColor = Colors.orange.shade100;
   String hairLength = 'Long Hair';
-  String hairstyle = 'Curly';
-  String personality = 'Cheerful';
+  String hairstyle = 'Straight';
+  String personality = 'Tsundere';
 
   Uint8List? _generatedImage;
   bool _isGenerating = false;
@@ -331,12 +331,8 @@ class _GeneratePageState extends State<GeneratePage> {
       );
 
       request.headers['X-Api-Key'] =
-<<<<<<< HEAD
-          'X9Rds1bbxpjagPedUbDEioEz'; // 替換成你的 API Key
-=======
-          'mLDmDTfS3hBr778jmovUbbLu'; // pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
+          'BX5VUr4gjZdaApieFvNydW78'; //'mLDmDTfS3hBr778jmovUbbLu'; // pUu4KGwYyRf9PMBaFH4WSdTZ'; // 替換成你的 API Key
 
->>>>>>> 555f14f2f4dd7b32840b077c6bab3a9356f0ba3c
       request.files.add(
         http.MultipartFile.fromBytes(
           'image_file',

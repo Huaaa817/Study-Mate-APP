@@ -67,10 +67,10 @@ export const greetingFlow = ai.defineFlow(
             console.log("Now (UTC):", now.toISOString());
 
             // 建立台灣 UTC+8 今天的 00:00
-            const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, -8));
+            const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1));
             console.log("Today (UTC+8):", today.toISOString());
             // 建立台灣 UTC+8 明天的 00:00
-            const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 2, -8));
+            const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
             console.log("Tomorrow (UTC+8):", tomorrow.toISOString());
 
             const todosSnapshot = await db
